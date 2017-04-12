@@ -32,9 +32,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5087E73D17EB910900C73F5D"
-            BuildableName = "test2.3-desktop.app"
-            BlueprintName = "test2.3-desktop"
+            BlueprintIdentifier = "1D6058900D05DD3D006BFB54"
+            BuildableName = "test2.3-mobile.app"
+            BlueprintName = "test2.3-mobile"
             ReferencedContainer = "container:test2.3.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -55,9 +55,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5087E73D17EB910900C73F5D"
-            BuildableName = "test2.3-desktop.app"
-            BlueprintName = "test2.3-desktop"
+            BlueprintIdentifier = "1D6058900D05DD3D006BFB54"
+            BuildableName = "test2.3-mobile.app"
+            BlueprintName = "test2.3-mobile"
             ReferencedContainer = "container:test2.3.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
