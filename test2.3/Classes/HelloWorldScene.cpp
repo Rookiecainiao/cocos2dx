@@ -314,10 +314,24 @@ void HelloWorld::kongqiu(int _i){
             cout<<"客危险进攻"<<endl;
             break;
         case 7:
-            cout<<"主进球"<<endl;
+            progress->setSprite(sp_wxjg);
+            percent = 0;
+            progress->setRotation(0);
+            progress->setPosition(Vec2(0, sprbg->getPosition().y));
+            progress->setAnchorPoint(Vec2(0, 1));
+            progress->setMidpoint(Vec2(0, 0));//水平方向（1，y）表示从右向左，（0.y）表示从左向右
+            progress->setBarChangeRate(Vec2(1, 0));//纵向
+            progress->setScaleX(1.2);
+            cout<<"主危险进攻深入"<<endl;
             break;
         case 8:
-            cout<<"客进球"<<endl;
+            percent = 0;
+            progress->setSprite(sp_wxjg);
+            progress->setPosition(Vec2(480, sprbg->getPosition().y));
+            progress->setAnchorPoint(Vec2(0, 0));
+            progress->setRotation(180);
+//            progress->setScaleX(1.2);
+            cout<<"客危险进攻深入"<<endl;
             break;
             
         default:
@@ -332,7 +346,7 @@ void HelloWorld::menuCloseCallback(Ref* pSender)
     if (state>4) {
         state = 1;
     }
-    if (i>5) {
+    if (i>7) {
         i=0;
     }
     kongqiu(++i);
