@@ -10,6 +10,7 @@
 /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/CloseNormal.png \
 /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/CloseSelected.png \
 /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/donghuabg.png \
+/Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/File.txt \
 /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/fonts \
 /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/HelloWorld.png \
 /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/res \
@@ -22,6 +23,7 @@
 /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/res/baiju.png \
 /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/res/baiyuan.png \
 /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/res/donghuabg.png \
+/Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/res/File.txt \
 /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/res/football.png \
 /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/res/heiju.png \
 /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/res/hongpai.png \

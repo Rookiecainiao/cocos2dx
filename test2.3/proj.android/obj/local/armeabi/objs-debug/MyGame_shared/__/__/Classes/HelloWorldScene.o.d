@@ -367,7 +367,37 @@ obj/local/armeabi/objs-debug/MyGame_shared/__/__/Classes/HelloWorldScene.o: \
  /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/cocos/3d/../ui/UILayoutParameter.h \
  /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/cocos/3d/../ui/GUIExport.h \
  /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/cocos/3d/../ui/GUIDefine.h \
- /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/cocos/3d/../base/ObjectFactory.h
+ /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/cocos/3d/../base/ObjectFactory.h \
+ /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/cocos/3d/../network/HttpRequest.h \
+ /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/cocos/3d/../network/HttpClient.h \
+ /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/cocos/3d/../network/HttpResponse.h \
+ /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/cocos/3d/../network/HttpCookie.h \
+ /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/rapidjson.h \
+ /Users/yaofuyu/Desktop/MR_lizhe/adt2/ndk/sources/cxx-stl/gnu-libstdc++/4.9/include/cstring \
+ /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/Document.h \
+ /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/reader.h \
+ /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/allocators.h \
+ /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/rapidjson.h \
+ /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/stream.h \
+ /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/encodings.h \
+ /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/encodedstream.h \
+ /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/memorystream.h \
+ /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/internal/meta.h \
+ /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/internal/../rapidjson.h \
+ /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/internal/stack.h \
+ /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/internal/../allocators.h \
+ /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/internal/swap.h \
+ /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/internal/strtod.h \
+ /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/internal/ieee754.h \
+ /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/internal/biginteger.h \
+ /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/internal/diyfp.h \
+ /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/internal/pow10.h \
+ /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/error/error.h \
+ /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/error/../rapidjson.h \
+ /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/internal/strfunc.h \
+ /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/internal/../stream.h \
+ /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/internal/../rapidjson.h \
+ /Users/yaofuyu/Desktop/MR_lizhe/adt2/ndk/sources/cxx-stl/gnu-libstdc++/4.9/include/iterator
 
 jni/../../Classes/HelloWorldScene.h:
 
@@ -1104,3 +1134,63 @@ jni/../../Classes/HelloWorldScene.h:
 /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/cocos/3d/../ui/GUIDefine.h:
 
 /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/cocos/3d/../base/ObjectFactory.h:
+
+/Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/cocos/3d/../network/HttpRequest.h:
+
+/Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/cocos/3d/../network/HttpClient.h:
+
+/Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/cocos/3d/../network/HttpResponse.h:
+
+/Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/cocos/3d/../network/HttpCookie.h:
+
+/Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/rapidjson.h:
+
+/Users/yaofuyu/Desktop/MR_lizhe/adt2/ndk/sources/cxx-stl/gnu-libstdc++/4.9/include/cstring:
+
+/Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/Document.h:
+
+/Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/reader.h:
+
+/Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/allocators.h:
+
+/Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/rapidjson.h:
+
+/Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/stream.h:
+
+/Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/encodings.h:
+
+/Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/encodedstream.h:
+
+/Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/memorystream.h:
+
+/Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/internal/meta.h:
+
+/Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/internal/../rapidjson.h:
+
+/Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/internal/stack.h:
+
+/Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/internal/../allocators.h:
+
+/Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/internal/swap.h:
+
+/Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/internal/strtod.h:
+
+/Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/internal/ieee754.h:
+
+/Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/internal/biginteger.h:
+
+/Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/internal/diyfp.h:
+
+/Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/internal/pow10.h:
+
+/Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/error/error.h:
+
+/Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/error/../rapidjson.h:
+
+/Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/internal/strfunc.h:
+
+/Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/internal/../stream.h:
+
+/Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/cocos2d/external/flatbuffers/../json/internal/../rapidjson.h:
+
+/Users/yaofuyu/Desktop/MR_lizhe/adt2/ndk/sources/cxx-stl/gnu-libstdc++/4.9/include/iterator:

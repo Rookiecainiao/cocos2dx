@@ -4,12 +4,15 @@
 #include "ui/UIButton.h"
 #include "network/HttpRequest.h"
 #include "network/HttpClient.h"
+#include "json/rapidjson.h"
+#include "json/Document.h"
+
 using namespace std;
 USING_NS_CC;
 using namespace ui;
 using namespace network;
+using namespace rapidjson;
 
-int percent = 0;
 
 Scene* HelloWorld::createScene()
 {
@@ -37,8 +40,6 @@ bool HelloWorld::init()
     
     this->setCascadeOpacityEnabled(true);
     initUI();
-    
-    
     
     startUI();
     cc_state=0;
@@ -101,7 +102,7 @@ void HelloWorld::startUI(){
     auto act6 = TargetedAction::create(lab_teamB, act3);
     auto act7 = Spawn::create(act5,act6, NULL);
     //动作机制调用函数！！
-    CallFuncN * callfunc = CallFuncN::create(CC_CALLBACK_0(HelloWorld::callback1, this,node_RY));
+    CallFuncN * callfunc = CallFuncN::create(CC_CALLBACK_1(HelloWorld::callback1, this));
     
     lab_teamB->runAction(Sequence::create(act4,act7,DelayTime::create(2),callfunc, NULL));
 //同一个动作，两个node同时执行时，最后一个node执行，前面的node都不执行，即spawn方法如果有多个node执行，只显示最后执行的node的效果。
@@ -116,62 +117,7 @@ void HelloWorld::callback1(Node* sender){
     startUInode->removeFromParent();
 }
 void HelloWorld::update(float time){
-//状态判定：1角球、球门球、点球、掷界外球状态 ； 2、控球状态 ； 3、球移动状态 ；
     
-    //            state_dq;//点球状态判定
-    //            state_kongqiu;//控球状态判定
-    //            state_qmove;//球移动状态判定
-    //           state_qjiewai;//角球状态判定
-    
-    switch (cc_state) {
-            //状态1：角球
-        case 1:
-            if (state_dq) {
-                jiaoqiu(1);
-                progress->setVisible(false);
-                progress1->setVisible(true);
-            }
-            state_dq = false;
-            state_kongqiu = true;
-            state_qmove = true;
-            state_qjiewai = true;
-            node_lab->setVisible(false);
-            break;
-            //状态2：控球
-        case 2:
-            //sta1=0;sta3=0;sta4=0;->true
-            //if(sta2){fangf}
-            //sta2->false
-            progress->setVisible(true);
-            progress1->setVisible(false);
-            if (state_kongqiu) {
-                kongqiu(1);
-//                lab_state();
-//                lab_move(Vec2(300, 700));
-            }
-//            unschedule(schedule_selector(HelloWorld::update_dianqiu));
-            state_dq = true;
-            state_kongqiu = false;
-            state_qmove = true;
-            state_qjiewai = true;
-            node_lab->setVisible(true);
-            break;
-            //状态3：球移动
-        case 3:
-            unschedule(schedule_selector(HelloWorld::update_dianqiu));
-            progress1->setVisible(false);
-            progress->setVisible(false);
-            move(Vec2(300, 400));
-            state_dq = true;
-            state_kongqiu = true;
-            state_qjiewai = true;
-            node_lab->setVisible(true);
-            break;
-        case 4:
-            break;
-        default:
-            break;
-    }
     
 }
 //UI布局初始化
@@ -263,8 +209,8 @@ void HelloWorld::initUI(){
     progress->setAnchorPoint(Vec2(0, 1));
     progress->setMidpoint(Vec2(0, 0));//水平方向（1，y）表示从右向左，（0.y）表示从左向右
     progress->setBarChangeRate(Vec2(1, 0));//纵向
-//    progress->setVisible(false);
-//    progress1->setVisible(false);
+    progress->setVisible(false);
+    progress1->setVisible(false);
     addChild(progress1,3);
     addChild(progress,3);
 //    scheduleUpdate();
@@ -273,48 +219,93 @@ void HelloWorld::initUI(){
 }
 //角球阴影三段技
 void HelloWorld::update_dianqiu(float dt){
-    if (percent>=200) {
-        percent = 0;
+    if (percent_jiaoqiu>=300) {
+        percent_jiaoqiu = 0;
     }
-    percent+=5;
-    progress->setPercentage(percent);
-    progress1->setPercentage(percent);
-    cout<<"update_dianqiu"<<endl;
+    percent_jiaoqiu+=5;
+    progress1->setPercentage(percent_jiaoqiu);
 }
 //角球方法，点球，角球，球门球，掷界外球
 void HelloWorld::jiaoqiu(int _state){
+    this->removeAllChildren();
+    this->unscheduleAllSelectors();
     initUI();
-    progress->setVisible(false);
+    schedule(schedule_selector(HelloWorld::update_dianqiu));
+    progress1->setVisible(true);
     football->setVisible(true);
     auto sprbgvisible = sprbg->getContentSize();
     auto sprbgorigin = sprbg->getPosition();
-    
-    switch (cc_state) {
+    percent_jiaoqiu=100;
+    switch (_state) {
         case 1:
             progress1->setPosition(Vec2(sprbgorigin.x-sprbgvisible.width/2, sprbgorigin.y));
             progress1->setRotation(150);
             cout<<"左上"<<endl;
+            lab_state(1, "角球");
+            lab_move(Vec2(sprbgorigin.x-sprbgvisible.width/4, sprbgorigin.y-sprbgvisible.height/4));
             break;
         case 2:
             progress1->setPosition(Vec2(sprbgorigin.x-sprbgvisible.width/2, sprbgorigin.y-sprbgvisible.height));
             progress1->setRotation(30);
             cout<<"左下"<<endl;
+            lab_state(1, "角球");
+            lab_move(Vec2(sprbgorigin.x-sprbgvisible.width/4, sprbgorigin.y-sprbgvisible.height/4*3));
             break;
         case 3:
             progress1->setPosition(Vec2(sprbgorigin.x+sprbgvisible.width/2, sprbgorigin.y));
             progress1->setRotation(-150);
             cout<<"右上"<<endl;
+            lab_state(2, "角球");
+            lab_move(Vec2(sprbgorigin.x+sprbgvisible.width/4, sprbgorigin.y-sprbgvisible.height/4));
             break;
         case 4:
             progress1->setPosition(Vec2(sprbgorigin.x+sprbgvisible.width/2, sprbgorigin.y-sprbgvisible.height));
             progress1->setRotation(-30);
             cout<<"右下"<<endl;
+            lab_state(2, "角球");
+            lab_move(Vec2(sprbgorigin.x+sprbgvisible.width/4, sprbgorigin.y-sprbgvisible.height/4*3));
             break;
         case 5:
-            cout<<"中上"<<endl;
+            progress1->setPosition(Vec2(sprbgorigin.x-sprbgvisible.width/2+50, sprbgorigin.y-sprbgvisible.height/2));
+            progress1->setRotation(90);
+            cout<<"主球门球"<<endl;
+            lab_state(1, "球门球");
+            lab_move(Vec2(sprbgorigin.x-sprbgvisible.width/4, sprbgorigin.y-sprbgvisible.height/4));
             break;
         case 6:
-            cout<<"中下"<<endl;
+            progress1->setPosition(Vec2(sprbgorigin.x+sprbgvisible.width/2-50, sprbgorigin.y-sprbgvisible.height/2));
+            progress1->setRotation(-90);
+            cout<<"客球门球"<<endl;
+            lab_state(2, "球门球");
+            lab_move(Vec2(sprbgorigin.x+sprbgvisible.width/4, sprbgorigin.y-sprbgvisible.height/4));
+            break;
+        case 7:
+            progress1->setPosition(Vec2(sprbgorigin.x, sprbgorigin.y-sprbgvisible.height/2));
+            progress1->setRotation(90);
+            cout<<"主任意球"<<endl;
+            lab_state(1,"任意球");
+            lab_move(Vec2(sprbgorigin.x-20, sprbgorigin.y-sprbgvisible.height/2));
+            break;
+        case 8:
+            progress1->setPosition(Vec2(sprbgorigin.x, sprbgorigin.y-sprbgvisible.height/2));
+            progress1->setRotation(-90);
+            cout<<"客任意球"<<endl;
+            lab_state(2,"任意球");
+            lab_move(Vec2(sprbgorigin.x+20, sprbgorigin.y-sprbgvisible.height/2));
+            break;
+        case 9:
+            progress1->setPosition(Vec2(sprbgorigin.x+140, sprbgorigin.y-sprbgvisible.height/2));
+            progress1->setRotation(90);
+            lab_state(1,"危险任意球");
+            lab_move(Vec2(sprbgorigin.x+100, sprbgorigin.y-sprbgvisible.height/2));
+            cout<<"主危险任意球"<<endl;
+            break;
+        case 10:
+            progress1->setPosition(Vec2(sprbgorigin.x-140, sprbgorigin.y-sprbgvisible.height/2));
+            progress1->setRotation(-90);
+            cout<<"客危险任意球"<<endl;
+            lab_state(2,"危险任意球");
+            lab_move(Vec2(sprbgorigin.x-100, sprbgorigin.y-sprbgvisible.height/2));
             break;
             
         default:
@@ -322,17 +313,19 @@ void HelloWorld::jiaoqiu(int _state){
     }
     football->stopAllActions();
     football->setPosition(progress1->getPosition());
-    schedule(schedule_selector(HelloWorld::update_dianqiu), 0.05);
 }
 //控球状态的阴影特效变换
 void HelloWorld::kongqiu(int _i){
-//    cc_state = _i;
+    percent_kongqiu=100;
+    this->removeAllChildren();
+    this->unscheduleAllSelectors();
     initUI();
-    progress1->setVisible(false);
-    switch (cc_state) {
+    schedule(schedule_selector(HelloWorld::update_q));
+    progress->setVisible(true);
+    switch (_i) {
         case 1:
             progress->setSprite(sp_kq);
-//            percent = 0;
+//            percent = 100;
             progress->setRotation(0);
             progress->setPosition(Vec2(sprbg->getPosition().x-sprbg->getContentSize().width/2, sprbg->getPosition().y));
             progress->setAnchorPoint(Vec2(0, 1));
@@ -340,11 +333,11 @@ void HelloWorld::kongqiu(int _i){
             progress->setBarChangeRate(Vec2(1, 0));//纵向
             cout<<"主控球"<<endl;
             lab_move(Vec2(sprbg->getPosition().x-50, sprbg->getPosition().y-sprbg->getContentSize().height/2));
-            lab_state(cc_state);
+            lab_state(1,"控球");
             break;
         case 2:
             progress->setSprite(sp);
-            percent = 0;
+//            percent = 100;
             progress->setRotation(0);
             progress->setPosition(Vec2(sprbg->getPosition().x-sprbg->getContentSize().width/2, sprbg->getPosition().y));
             progress->setAnchorPoint(Vec2(0, 1));
@@ -352,11 +345,11 @@ void HelloWorld::kongqiu(int _i){
             progress->setBarChangeRate(Vec2(1, 0));//纵向
             cout<<"主进攻"<<endl;
             lab_move(Vec2(sprbg->getPosition().x+sprbg->getContentSize().width/8, sprbg->getPosition().y-sprbg->getContentSize().height/2));
-            lab_state(cc_state);
+            lab_state(1,"进攻");
             break;
         case 3:
             progress->setSprite(sp_wxjg);
-            percent = 0;
+//            percent = 100;
             progress->setRotation(0);
             progress->setPosition(Vec2(sprbg->getPosition().x-sprbg->getContentSize().width/2, sprbg->getPosition().y));
             progress->setAnchorPoint(Vec2(0, 1));
@@ -364,57 +357,37 @@ void HelloWorld::kongqiu(int _i){
             progress->setBarChangeRate(Vec2(1, 0));//纵向
             cout<<"主危险进攻"<<endl;
             lab_move(Vec2(sprbg->getPosition().x+sprbg->getContentSize().width/4, sprbg->getPosition().y-sprbg->getContentSize().height/2));
-            lab_state(cc_state);
+            lab_state(1,"危险进攻");
             break;
         case 4:
-            percent = 0;
+//            percent = 100;
             progress->setSprite(sp_kq);
             progress->setPosition(Vec2(sprbg->getPosition().x+sprbg->getContentSize().width/2, sprbg->getPosition().y));
             progress->setAnchorPoint(Vec2(0, 0));
             progress->setRotation(180);
             cout<<"客控球"<<endl;
             lab_move(Vec2(sprbg->getPosition().x+50, sprbg->getPosition().y-sprbg->getContentSize().height/2));
-            lab_state(cc_state);
+            lab_state(2,"控球");
             break;
         case 5:
-            percent = 0;
+//            percent = 100;
             progress->setSprite(sp);
             progress->setPosition(Vec2(sprbg->getPosition().x+sprbg->getContentSize().width/2, sprbg->getPosition().y));
             progress->setAnchorPoint(Vec2(0, 0));
             progress->setRotation(180);
             lab_move(Vec2(sprbg->getPosition().x-sprbg->getContentSize().width/8, sprbg->getPosition().y-sprbg->getContentSize().height/2));
-            lab_state(cc_state);
+            lab_state(2,"进攻");
             cout<<"客进攻"<<endl;
             break;
         case 6:
-            percent = 0;
+//            percent = 100;
             progress->setSprite(sp_wxjg);
             progress->setPosition(Vec2(sprbg->getPosition().x+sprbg->getContentSize().width/2, sprbg->getPosition().y));
             progress->setAnchorPoint(Vec2(0, 0));
             progress->setRotation(180);
             lab_move(Vec2(sprbg->getPosition().x-sprbg->getContentSize().width/4, sprbg->getPosition().y-sprbg->getContentSize().height/2));
             cout<<"客危险进攻"<<endl;
-            lab_state(cc_state);
-            break;
-        case 7:
-            progress->setSprite(sp_wxjg);
-            percent = 0;
-            progress->setRotation(0);
-            progress->setPosition(Vec2(sprbg->getPosition().x-sprbg->getContentSize().width/2, sprbg->getPosition().y));
-            progress->setAnchorPoint(Vec2(0, 1));
-            progress->setMidpoint(Vec2(0, 0));//水平方向（1，y）表示从右向左，（0.y）表示从左向右
-            progress->setBarChangeRate(Vec2(1, 0));//纵向
-//            progress->setScaleX(1.2);
-            cout<<"主危险进攻深入"<<endl;
-            break;
-        case 8:
-            percent = 0;
-            progress->setSprite(sp_wxjg);
-            progress->setPosition(Vec2(sprbg->getPosition().x+sprbg->getContentSize().width/2, sprbg->getPosition().y));
-            progress->setAnchorPoint(Vec2(0, 0));
-            progress->setRotation(180);
-//            progress->setScaleX(1.2);
-            cout<<"客危险进攻深入"<<endl;
+            lab_state(2,"危险进攻");
             break;
             
         default:
@@ -483,13 +456,84 @@ void HelloWorld::menuCloseCallback(Ref* pSender)
     cc_state++;
 
     cout<<cc_state<<endl;
-    if (cc_state>6) {
+    if (cc_state>21) {
         cc_state=0;
     }
-    this->removeAllChildren();
+    switch (cc_state) {
+        case 1:
+            footballCaseType(CASE_Start_RT1);
+            break;
+        case 2:
+            footballCaseType(CASE_AT1);
+            break;
+        case 3:
+            footballCaseType(CASE_DAT1);
+            break;
+        case 4:
+            footballCaseType(CASE_SAFE1);
+            break;
+        case 5:
+            footballCaseType(CASE_AT2);
+            break;
+        case 6:
+            footballCaseType(CASE_DAT2);
+            break;
+        case 7:
+            footballCaseType(CASE_SAFE2);
+            break;
+        case 8:
+            footballCaseType(CASE_CR2);
+            break;
+        case 9:
+            footballCaseType(CASE_GK2);
+            break;
+        case 10:
+            footballCaseType(CASE_GK1);
+            break;
+        case 11:
+            footballCaseType(CASE_RC1);
+            break;
+        case 12:
+            footballCaseType(CASE_CR1);
+            break;
+        case 13:
+            footballCaseType(CASE_YC1);
+            break;
+        case 14:
+            footballCaseType(CASE_DFK2);
+            break;
+        case 15:
+            footballCaseType(CASE_GOAL2);
+            break;
+        case 16:
+            footballCaseType(CASE_GOAL1);
+            break;
+        case 17:
+            footballCaseType(CASE_DFK1);
+            break;
+        case 18:
+            footballCaseType(CASE_FK1);
+            break;
+        case 19:
+            footballCaseType(CASE_RC2);
+            break;
+        case 20:
+            footballCaseType(CASE_YC2);
+            break;
+        case 21:
+            footballCaseType(CASE_GK2);
+            break;
+            
+        default:
+            break;
+    }
+//    this->removeAllChildren();
 //    kongqiu(cc_state);
 //    jinqiu();
-    jiaoqiu(2);
+//    jiaoqiu(4);
+//    netClick();
+//    JX_json();
+//    footballCaseType(CASE_Start_RT1);
     
 }
 //球移动到指定的位置
@@ -525,34 +569,52 @@ void HelloWorld::qshadow(Point _point){
 }
 //监测球的位置，当球到达指定位置后，执行球没有移动的时候的阴影动作
 void HelloWorld::update_q(float dt){
-    qshadow(Vec2(460, 700));
-    
+//    qshadow(Vec2(460, 700));
+    if (percent_kongqiu>=300) {
+        percent_kongqiu = 0;
+    }
+    percent_kongqiu+=5;
+    progress->setPercentage(percent_kongqiu);
+     
 }
 //进球时的动画展示
-void HelloWorld::jinqiu(){
+void HelloWorld::jinqiu(int _i){
+    this->removeAllChildren();
+    this->unscheduleAllSelectors();
     initUI();
     auto jinqiu = Sprite::create("res/jinqiu.png");
-    jinqiu->setPosition(Vec2::ZERO);
-    auto lab_jinqiu = Label::createWithSystemFont("进球", "fonts/arial.ttf", 24);
-    lab_jinqiu->setPosition(Vec2(-60, 0));
-    node_jinqiu  = Node::create();
-    node_jinqiu->addChild(jinqiu);
-    node_jinqiu->addChild(lab_jinqiu);
-    addChild(node_jinqiu,5);
-    node_jinqiu->setPosition(Vec2(sprbg->getPosition().x, sprbg->getPosition().y-sprbg->getContentSize().height/2));
-    node_jinqiu->setCascadeOpacityEnabled(true);
-    node_jinqiu->setOpacity(0);
+    addChild(jinqiu,5);
+    //两个状态，1、主场进球  2、客场进球
+    switch (_i) {
+        case 1:
+            jinqiu->setPosition(Vec2(sprbg->getPosition().x+sprbg->getContentSize().width/2-50, sprbg->getPosition().y-sprbg->getContentSize().height/2));
+            jinqiu->setRotation(0);
+            lab_state(1, "进球");
+            lab_move(Vec2(sprbg->getPosition().x+sprbg->getContentSize().width/2-100, sprbg->getPosition().y-sprbg->getContentSize().height/2));
+            break;
+        case 2:
+            jinqiu->setPosition(Vec2(sprbg->getPosition().x-sprbg->getContentSize().width/2+50, sprbg->getPosition().y-sprbg->getContentSize().height/2));
+            jinqiu->setRotation(180);
+            lab_state(2, "进球");
+            lab_move(Vec2(sprbg->getPosition().x-sprbg->getContentSize().width/2+100, sprbg->getPosition().y-sprbg->getContentSize().height/2));
+            break;
+        default:
+            break;
+    }
+    jinqiu->setCascadeOpacityEnabled(true);
+    jinqiu->setOpacity(0);
     auto act_node = FadeTo::create(1,255);
     auto act = FadeTo::create(1, 0);
-    node_jinqiu->runAction(RepeatForever::create(Sequence::create(act_node,act, NULL)));
+    jinqiu->runAction(RepeatForever::create(Sequence::create(act_node,act, NULL)));
 }
 //进攻时的文字lab的动态展示
-void HelloWorld::lab_state(int _state){
+void HelloWorld::lab_state(int _state,char* _word){
     node_lab->setVisible(true);
+    //1、主队文字  2、客队文字
     switch (_state) {
         case 1:
             lab_sp->setColor(Color3B::BLACK);
-            lab_st->setString("控球");
+            lab_st->setString(_word);
             lab->setString("黑影队");
             lab_st->setPosition(Vec2(lab_sp->getPosition().x-20, lab_sp->getPosition().y));
             lab_st->setAnchorPoint(Vec2(1, 1));
@@ -560,44 +622,8 @@ void HelloWorld::lab_state(int _state){
             lab->setAnchorPoint(Vec2(1, 0));
             break;
         case 2:
-            lab_sp->setColor(Color3B::BLACK);
-            lab_st->setString("进攻");
-            lab->setString("黑影队");
-            lab_st->setPosition(Vec2(lab_sp->getPosition().x-20, lab_sp->getPosition().y));
-            lab_st->setAnchorPoint(Vec2(1, 1));
-            lab->setPosition(Vec2(lab_sp->getPosition().x-20, lab_sp->getPosition().y));
-            lab->setAnchorPoint(Vec2(1, 0));
-            break;
-        case 3:
-            lab_sp->setColor(Color3B::BLACK);
-            lab_st->setString("危险进攻");
-            lab->setString("黑影队");
-            lab_st->setPosition(Vec2(lab_sp->getPosition().x-20, lab_sp->getPosition().y));
-            lab_st->setAnchorPoint(Vec2(1, 1));
-            lab->setPosition(Vec2(lab_sp->getPosition().x-20, lab_sp->getPosition().y));
-            lab->setAnchorPoint(Vec2(1, 0));
-            break;
-        case 4:
             lab_sp->setColor(Color3B::WHITE);
-            lab_st->setString("控球");
-            lab_st->setPosition(Vec2(lab_sp->getPosition().x+20, lab_sp->getPosition().y));
-            lab_st->setAnchorPoint(Vec2(0, 1));
-            lab->setString("白影队");
-            lab->setPosition(Vec2(lab_sp->getPosition().x+20, lab_sp->getPosition().y));
-            lab->setAnchorPoint(Vec2(0, 0));
-            break;
-        case 5:
-            lab_sp->setColor(Color3B::WHITE);
-            lab_st->setString("进攻");
-            lab_st->setPosition(Vec2(lab_sp->getPosition().x+20, lab_sp->getPosition().y));
-            lab_st->setAnchorPoint(Vec2(0, 1));
-            lab->setString("白影队");
-            lab->setPosition(Vec2(lab_sp->getPosition().x+20, lab_sp->getPosition().y));
-            lab->setAnchorPoint(Vec2(0, 0));
-            break;
-        case 6:
-            lab_sp->setColor(Color3B::WHITE);
-            lab_st->setString("危险进攻");
+            lab_st->setString(_word);
             lab_st->setPosition(Vec2(lab_sp->getPosition().x+20, lab_sp->getPosition().y));
             lab_st->setAnchorPoint(Vec2(0, 1));
             lab->setString("白影队");
@@ -619,28 +645,46 @@ void HelloWorld::lab_move(Point _point){
 //    node_lab->runAction(act);
     node_lab->setPosition(Vec2(_point.x, _point.y));
 }
-void HelloWorld::pai_RY(){
-    node_RY->setPosition(Vec2(sprbg->getPosition().x, sprbg->getPosition().y-sprbg->getContentSize().height/2-40));
-    addChild(node_RY,5);
-    auto pai_spr = Sprite::create();
-    auto lab_pai = Label::createWithSystemFont("红牌", "fonts/arial.ttf", 24);
-    node_RY->setCascadeOpacityEnabled(true);
-    if (true) {
-        pai_spr = Sprite::create("res/hongpai.png");
-        lab_pai->setString("红牌");
-    }else{
-        pai_spr = Sprite::create("res/huangpai.png");
-        lab_pai->setString("黄牌");
+void HelloWorld::pai_RY(int _pai){
+    this->removeAllChildren();
+    this->unscheduleAllSelectors();
+    initUI();
+    //1、主队红牌 2、主队黄牌 3、客队红牌 4、客队黄牌
+    switch (_pai) {
+        case 1:
+            pai_spr = Sprite::create("res/hongpai.png");
+            pai_spr->setPosition(Vec2(sprbg->getPosition().x+20, sprbg->getPosition().y-sprbg->getContentSize().height/2-40));
+            lab_state(1, "红牌");
+            lab_move(Vec2(sprbg->getPosition().x, sprbg->getPosition().y-sprbg->getContentSize().height/2));
+            break;
+        case 2:
+            pai_spr = Sprite::create("res/huangpai.png");
+            pai_spr->setPosition(Vec2(sprbg->getPosition().x+20, sprbg->getPosition().y-sprbg->getContentSize().height/2-40));
+            lab_state(1, "黄牌");
+            lab_move(Vec2(sprbg->getPosition().x, sprbg->getPosition().y-sprbg->getContentSize().height/2));
+            break;
+        case 3:
+            pai_spr = Sprite::create("res/hongpai.png");
+            pai_spr->setPosition(Vec2(sprbg->getPosition().x-20, sprbg->getPosition().y-sprbg->getContentSize().height/2-40));
+            lab_state(2, "红牌");
+            lab_move(Vec2(sprbg->getPosition().x, sprbg->getPosition().y-sprbg->getContentSize().height/2));
+            break;
+        case 4:
+            pai_spr = Sprite::create("res/huangpai.png");
+            pai_spr->setPosition(Vec2(sprbg->getPosition().x-20, sprbg->getPosition().y-sprbg->getContentSize().height/2-40));
+            lab_state(2, "黄牌");
+            lab_move(Vec2(sprbg->getPosition().x, sprbg->getPosition().y-sprbg->getContentSize().height/2));
+            break;
+        default:
+            break;
     }
-    pai_spr->setPosition(Vec2::ZERO);
-    lab_pai->setPosition(Vec2(-30, 0));
-    node_RY->addChild(lab_pai);
-    node_RY->addChild(pai_spr);
-    node_RY->setOpacity(0);
+    
+    pai_spr->setOpacity(0);
     auto act_pai = FadeTo::create(0.5, 255);
     auto act2_pai = MoveBy::create(0.5, Vec2(0, 40));
-    node_RY->runAction(Spawn::create(act_pai,act2_pai, NULL));
-    
+    pai_spr->runAction(Spawn::create(act_pai,act2_pai, NULL));
+    addChild(pai_spr,5);
+    pai_spr->setCascadeOpacityEnabled(true);
 }
 //受伤
 void HelloWorld::injured(){
@@ -689,8 +733,411 @@ void HelloWorld::onHttpRequestCompleted(Node *sender ,void *data){
     for (int i = 0; i<buffer->size(); i++) {
         recieveData+=(*buffer)[i];
     }
-    size_t begin = recieveData.find("<body")+6;
-    size_t end = recieveData.find("</body>");
+    
     string result(recieveData.begin(),recieveData.end());
+    //将std::vector(char)* 转换成 std::string的两种方法
+    string backStr = std::string(&(*buffer->begin()), buffer->size());
+    string anotherStr;
+    anotherStr.insert(anotherStr.begin(), buffer->begin(), buffer->end());
+    printf("%s\n", backStr.c_str());
+    printf("%s\n", anotherStr.c_str());
+    printf("\n");
+    
+    
+    
+    
+    if (strcmp(response->getHttpRequest()->getTag(), "json") == 0) {
+        //json解析方法
+        rapidjson::Document doc;
+        doc.Parse<0>(backStr.c_str());
+        const rapidjson::Value& v = doc["status"];
+        printf("status is : %s",v.GetString());
+        const rapidjson::Value& dir = doc["results"];
+        if (dir.IsArray()) {
+            unsigned int i = 0;
+            const rapidjson::Value& city = dir[i]["currentCity"];
+            log("city is %s", city.GetString());
+            //多层测试
+            const rapidjson::Value& title = doc["results"][(unsigned int)0]["index"][(unsigned int)2]["title"];
+            log("the title is %s", title.GetString());
+        }
+    }
     
 }
+//json文件解析
+void HelloWorld::JX_json(){
+    rapidjson::Document readdoc;
+    bool bRet = false;
+    ssize_t size = 0;
+    //从文件中获取字符串
+    string loadstr = FileUtils::getInstance()->getStringFromFile("res/File.txt");
+    cout<<loadstr.c_str()<<endl;
+    //将字符串转换成c格式的字符
+    readdoc.Parse<0>(loadstr.c_str());
+    if (readdoc.HasParseError()) {
+        log("GetParseError%u\n",readdoc.GetParseError());
+    }
+    
+    if (readdoc.HasMember("hello")) {
+        cout<<readdoc["hello"].GetString()<<endl;
+    }
+    if (readdoc.HasMember("province")) {
+        cout<<"object"<<endl;
+        for (int i =0 ; i<readdoc["province"].Size();i++ ) {
+            if (readdoc["province"][i].IsObject()) {
+                cout<<"object"<<i<<endl;
+                cout<<readdoc["province"][i]["name"].GetString()<<endl;
+            }
+        }
+    }
+
+        cout<<"this is guangdong"<<endl;
+        cout<<readdoc["province"][1]["cities"]["city"][1].GetString()<<endl;
+    
+    
+}
+//球场状态转换选择
+void HelloWorld::footballCaseType(int _FootballCaseType){
+    switch (_FootballCaseType) {
+        case CASE_Start_RT1:
+            cout<<"上半场开始"<<endl;
+            break;
+        case CASE_Stop_RT1:
+            cout<<"上半场结束"<<endl;
+            break;
+        case CASE_Start_RT2:
+            cout<<"下半场开始"<<endl;
+            break;
+        case CASE_Stop_RT2:
+            cout<<"下半场结束"<<endl;
+            break;
+        case CASE_Start_OT1:
+            cout<<"加时赛上半场开始"<<endl;
+            break;
+        case CASE_Stop_OT1:
+            cout<<"加时赛上半场结束"<<endl;
+            break;
+        case CASE_Start_OT2:
+            cout<<"加时赛下半场开始"<<endl;
+            break;
+        case CASE_Stop_OT2:
+            cout<<"加时赛下半场结束"<<endl;
+            break;
+        case CASE_Start_PEN:
+            cout<<"点球大战开始"<<endl;
+            break;
+        case CASE_Stop_PEN:
+            cout<<"点球大战结束"<<endl;
+            break;
+        case CASE_Start_RT1_Team_1:
+            cout<<"上半场开始,主队发球"<<endl;
+            break;
+        case CASE_Start_RT1_Team_2:
+            cout<<"上半场开始,客队发球"<<endl;
+            break;
+        case CASE_Start_RT2_Team_1:
+            cout<<"下半场开始,主队发球"<<endl;
+            break;
+        case CASE_Start_RT2_Team_2:
+            cout<<"下半场开始,客队发球"<<endl;
+            break;
+        case CASE_Start_OT1_Team_1:
+            cout<<"加时赛上半场开始,主队发球"<<endl;
+            break;
+        case CASE_Start_OT1_Team_2:
+            cout<<"加时赛上半场开始,客队发球"<<endl;
+            break;
+        case CASE_Start_OT2_Team_1:
+            cout<<"加时赛下半场开始,主队发球"<<endl;
+            break;
+        case CASE_Start_OT2_Team_2:
+            cout<<"加时赛下半场开始,客队发球"<<endl;
+            break;
+        case CASE_Start_PEN_Team_1:
+            cout<<"点球大战开始,主队发球"<<endl;
+            break;
+        case CASE_Start_PEN_Team_2:
+            cout<<"点球大战开始,客队发球"<<endl;
+            break;
+        case CASE_StopGame:
+            cout<<"比赛结束"<<endl;
+            break;
+        case CASE_StartOT:
+            cout<<"/加时赛开始"<<endl;
+            break;
+        case CASE_StopOvertime:
+            cout<<"加时赛结束"<<endl;
+            break;
+        case CASE_Missed:
+            cout<<"点球不中"<<endl;
+            break;
+        case CASE_PRC:
+            cout<<"可能红牌"<<endl;
+            break;
+        case CASE_PPEN:
+            cout<<"可能点球"<<endl;
+            break;
+        case CASE_NoRC:
+            cout<<"无红牌"<<endl;
+            break;
+        case CASE_NoPEN:
+            cout<<"无点球"<<endl;
+            break;
+        case CASE_RetakePEN:
+            cout<<"点球重罚"<<endl;
+            break;
+        case CASE_Restart:
+            cout<<"比赛继续,如伤停之后"<<endl;
+            break;
+        case CASE_GameSuspended:
+            cout<<"比赛因未知原因暂停"<<endl;
+            break;
+        case CASE_AT1:
+            kongqiu(2);
+            cout<<"主队进攻"<<endl;
+            break;
+        case CASE_CR1:
+            jiaoqiu(1);
+            cout<<"主队角球"<<endl;
+            break;
+        case CASE_DAT1:
+            kongqiu(3);
+            cout<<"主队危险进攻"<<endl;
+            break;
+        case CASE_DFK1:
+            jiaoqiu(9);
+            cout<<"主队危险任意球"<<endl;
+            break;
+        case CASE_FK1:
+            jiaoqiu(7);
+            cout<<"主队任意球"<<endl;
+            break;
+        case CASE_GOAL1:
+            jinqiu(1);
+            cout<<"主队进球"<<endl;
+            break;
+        case CASE_CGOAL1:
+            cout<<"主队进球取消"<<endl;
+            break;
+        case CASE_PEN1:
+            cout<<"主队点球"<<endl;
+            break;
+        case CASE_RC1:
+            pai_RY(1);
+            cout<<"主队红牌"<<endl;
+            break;
+        case CASE_SH1:
+            cout<<"主队射门"<<endl;
+            break;
+        case CASE_YC1:
+            pai_RY(2);
+            cout<<"主队黄牌"<<endl;
+            break;
+        case CASE_SHG1:
+            cout<<"主队射正"<<endl;
+            break;
+        case CASE_SHB1:
+            cout<<"主队射偏"<<endl;
+            break;
+        case CASE_SHW1:
+            cout<<"主队射中门框"<<endl;
+            break;
+        case CASE_F1:
+            cout<<"主队犯规"<<endl;
+            break;
+        case CASE_O1:
+            cout<<"主队越位"<<endl;
+            break;
+        case CASE_KO1:
+            cout<<"主队开球"<<endl;
+            break;
+        case CASE_YRC1:
+            cout<<"主队两黄转一红"<<endl;
+            break;
+        case CASE_CYC_RC1:
+            cout<<"主队两黄转一红取消"<<endl;
+            break;
+        case CASE_CRC1:
+            cout<<"主队红牌取消"<<endl;
+            break;
+        case CASE_CYC1:
+            cout<<"主队黄牌取消"<<endl;
+            break;
+        case CASE_CPEN1:
+            cout<<"主队点球取消"<<endl;
+            break;
+        case CASE_CCR1:
+            cout<<"主队角球取消"<<endl;
+            break;
+        case CASE_SAFE1:
+            kongqiu(1);
+            cout<<"主队控球"<<endl;
+            break;
+        case CASE_DANGER1:
+            cout<<"主队威胁进攻"<<endl;
+            break;
+        case CASE_GK1:
+            jiaoqiu(5);
+            cout<<"主队球门球"<<endl;
+            break;
+        case CASE_TI1:
+            cout<<"主队界外球"<<endl;
+            break;
+        case CASE_SUB1:
+            cout<<"主队换人"<<endl;
+            break;
+        case CASE_DSH1:
+            cout<<"主队威胁射门"<<endl;
+            break;
+        case CASE_SAVE1:
+            cout<<"主队扑救"<<endl;
+            break;
+        case CASE_BLOCKED1:
+            cout<<"主队封堵射门"<<endl;
+            break;
+        case CASE_RPEN1:
+            cout<<"主队重罚点球"<<endl;
+            break;
+        case CASE_MPEN1:
+            cout<<"主队点球射失"<<endl;
+            break;
+        case CASE_PPEN1:
+            cout<<"主队可能点球"<<endl;
+            break;
+        case CASE_BREAKAWAY1:
+            cout<<"主队突破"<<endl;
+            break;
+        case CASE_CONF_GOAL1:
+            cout<<"主队进球确认"<<endl;
+            break;
+        case CASE_PCR1:
+            cout<<"主队可能角球"<<endl;
+            break;
+        case CASE_NCR1:
+            cout<<"主队无角球"<<endl;
+            break;
+        case CASE_AT2:
+            kongqiu(5);
+            cout<<"客队进攻"<<endl;
+            break;
+        case CASE_CR2:
+            cout<<"客队角球"<<endl;
+            break;
+        case CASE_DAT2:
+            kongqiu(6);
+            cout<<"客队危险进攻"<<endl;
+            break;
+        case CASE_DFK2:
+            jiaoqiu(10);
+            cout<<"客队危险任意球"<<endl;
+            break;
+        case CASE_FK2:
+            jiaoqiu(8);
+            cout<<"客队任意球"<<endl;
+            break;
+        case CASE_GOAL2:
+            jinqiu(2);
+            cout<<"客队进球"<<endl;
+            break;
+        case CASE_CGOAL2:
+            cout<<"客队进球取消"<<endl;
+            break;
+        case CASE_PEN2:
+            cout<<"客队点球"<<endl;
+            break;
+        case CASE_RC2:
+            pai_RY(3);
+            cout<<"客队红牌"<<endl;
+            break;
+        case CASE_SH2:
+            cout<<"客队射门"<<endl;
+            break;
+        case CASE_YC2:
+            pai_RY(4);
+            cout<<"客队黄牌"<<endl;
+            break;
+        case CASE_SHG2:
+            cout<<"客队射正"<<endl;
+            break;
+        case CASE_SHB2:
+            cout<<"客队射偏"<<endl;
+            break;
+        case CASE_SHW2:
+            cout<<"客队射中门框"<<endl;
+            break;
+        case CASE_F2:
+            cout<<"客队犯规"<<endl;
+            break;
+        case CASE_KO2:
+            cout<<"客队开球"<<endl;
+            break;
+        case CASE_YRC2:
+            cout<<"客队两黄转一红"<<endl;
+            break;
+        case CASE_CYC_RC2:
+            cout<<"客队两黄转一红取消"<<endl;
+            break;
+        case CASE_CRC2:
+            cout<<"客队红牌取消"<<endl;
+            break;
+        case CASE_CYC2:
+            cout<<"客队黄牌取消"<<endl;
+            break;
+        case CASE_CPEN2:
+            cout<<"客队点球取消"<<endl;
+            break;
+        case CASE_CCR2:
+            cout<<"客队角球取消"<<endl;
+            break;
+        case CASE_SAFE2:
+            kongqiu(4);
+            cout<<"客队控球"<<endl;
+            break;
+        case CASE_DANGER2:
+            cout<<"客队威胁进攻"<<endl;
+            break;
+        case CASE_GK2:
+            jiaoqiu(6);
+            cout<<"客队球门球"<<endl;
+            break;
+        case CASE_TI2:
+            cout<<"客队界外球"<<endl;
+            break;
+        case CASE_SUB2:
+            cout<<"客队换人"<<endl;
+            break;
+        case CASE_DSH2:
+            cout<<"客队威胁射门"<<endl;
+            break;
+        case CASE_SAVE2:
+            cout<<"客队扑救"<<endl;
+            break;
+        case CASE_BLOCKED2:
+            cout<<"客队封堵射门"<<endl;
+            break;
+        case CASE_RPEN2:
+            cout<<"客队点球重罚"<<endl;
+            break;
+        case CASE_MPEN2:
+            cout<<"客队点球射失"<<endl;
+            break;
+        case CASE_PPEN2:
+            cout<<"客队可能点球"<<endl;
+            break;
+        case CASE_BREAKAWAY2:
+            cout<<"客队突破"<<endl;
+            break;
+        case CASE_CONF_GOAL2:
+            cout<<"客队进球确认"<<endl;
+            break;
+        case CASE_PCR2:
+            cout<<"客队可能角球"<<endl;
+            break;
+        case CASE_NCR2:
+            cout<<"客队无角球"<<endl;
+            break;
+        default:
+            break;
+    }
+}
+
