@@ -37,14 +37,18 @@ bool HelloWorld::init()
     {
         return false;
     }
+    schedule(schedule_selector(HelloWorld::update_cc));
     
+    name_teamA = "厄尔多瓜 20岁以下";
     this->setCascadeOpacityEnabled(true);
     initUI();
-    
-    startUI();
+   
     cc_state=0;
 //    schedule(schedule_selector(HelloWorld::update_q), 0.5);
     return true;
+}
+void HelloWorld::update_cc(float dt){
+//    cout<<"update_cc"<<endl;
 }
 //开局信息UI及出现特效
 void HelloWorld::startUI(){
@@ -420,18 +424,46 @@ void HelloWorld::labUI()
     lab5->setColor(Color3B::WHITE);
     addChild(lab5,4);
     
-    auto lab6 = Label::createWithSystemFont("进攻", "fonts/arial.ttf", 24 );
+    auto lab6 = Label::createWithSystemFont("进攻", "fonts/arial.ttf", 28 );
     lab6->setPosition(Vec2(visibleSize.width/5, sprbg->getPosition().y-25-sprbg->getContentSize().height));
     lab6->setColor(Color3B::WHITE);
     addChild(lab6,4);
-    auto lab7 = Label::createWithSystemFont("危险进攻", "fonts/arial.ttf", 24 );
+    
+    auto lab6_sp1 = Sprite::create("res/quan.png");
+    lab6_sp1->setPosition(Vec2(visibleSize.width/5, sprbg->getPosition().y-25-sprbg->getContentSize().height-60));
+    auto lab6_sp2 = Sprite::create("res/quan2.png");
+    auto lab6_pro = ProgressTimer::create(lab6_sp2);
+    lab6_pro->setPosition(Vec2(visibleSize.width/5, sprbg->getPosition().y-25-sprbg->getContentSize().height-60));
+    lab6_pro->setPercentage(60);
+    addChild(lab6_sp1,5);
+    addChild(lab6_pro,5);
+    
+    
+    auto lab7 = Label::createWithSystemFont("危险进攻", "fonts/arial.ttf", 28 );
     lab7->setPosition(Vec2(visibleSize.width/2, sprbg->getPosition().y-25-sprbg->getContentSize().height));
     lab7->setColor(Color3B::WHITE);
     addChild(lab7,4);
-    auto lab8 = Label::createWithSystemFont("球权%", "fonts/arial.ttf", 24 );
+    auto lab7_sp1 = Sprite::create("res/quan.png");
+    lab7_sp1->setPosition(Vec2(visibleSize.width/2, sprbg->getPosition().y-25-sprbg->getContentSize().height-60));
+    auto lab7_sp2 = Sprite::create("res/quan2.png");
+    auto lab7_pro = ProgressTimer::create(lab6_sp2);
+    lab7_pro->setPosition(Vec2(visibleSize.width/2, sprbg->getPosition().y-25-sprbg->getContentSize().height-60));
+    lab7_pro->setPercentage(60);
+    addChild(lab7_sp1,5);
+    addChild(lab7_pro,5);
+    
+    auto lab8 = Label::createWithSystemFont("球权%", "fonts/arial.ttf", 28 );
     lab8->setPosition(Vec2(visibleSize.width/5*4, sprbg->getPosition().y-25-sprbg->getContentSize().height));
     lab8->setColor(Color3B::WHITE);
     addChild(lab8,4);
+    auto lab8_sp1 = Sprite::create("res/quan.png");
+    lab8_sp1->setPosition(Vec2(visibleSize.width/5*4, sprbg->getPosition().y-25-sprbg->getContentSize().height-60));
+    auto lab8_sp2 = Sprite::create("res/quan2.png");
+    auto lab8_pro = ProgressTimer::create(lab6_sp2);
+    lab8_pro->setPosition(Vec2(visibleSize.width/5*4, sprbg->getPosition().y-25-sprbg->getContentSize().height-60));
+    lab8_pro->setPercentage(60);
+    addChild(lab8_sp1,5);
+    addChild(lab8_pro,5);
 
     lab_sp = Sprite::create("res/baiju.png");
     lab_sp->setPosition(Vec2(0, 0));
@@ -454,7 +486,18 @@ void HelloWorld::labUI()
 void HelloWorld::menuCloseCallback(Ref* pSender)
 {
     cc_state++;
-
+//    this->removeAllChildren();
+    cout<<"finish"<<endl;
+    if (UserDefault::getInstance()->getBoolForKey("isExisted")) {
+        cout<<"this had userdefault"<<endl;
+        cout<<UserDefault::getInstance()->getStringForKey("string")<<endl;
+        UserDefault::getInstance()->setBoolForKey("isExisted", false);
+    }else{
+        cout<<"this had no userdefault"<<endl;
+        UserDefault::getInstance()->setStringForKey("string", "helloworld");
+        UserDefault::getInstance()->setBoolForKey("isExisted", true);
+        UserDefault::getInstance()->flush();
+    }
     cout<<cc_state<<endl;
     if (cc_state>21) {
         cc_state=0;
@@ -615,7 +658,7 @@ void HelloWorld::lab_state(int _state,char* _word){
         case 1:
             lab_sp->setColor(Color3B::BLACK);
             lab_st->setString(_word);
-            lab->setString("黑影队");
+            lab->setString(name_teamA);
             lab_st->setPosition(Vec2(lab_sp->getPosition().x-20, lab_sp->getPosition().y));
             lab_st->setAnchorPoint(Vec2(1, 1));
             lab->setPosition(Vec2(lab_sp->getPosition().x-20, lab_sp->getPosition().y));
@@ -698,16 +741,25 @@ void HelloWorld::alternate(){
     
 }
 //加时与半场
-void HelloWorld::overtime(){
+void HelloWorld::overtime(int _i){
     initUI();
     auto lab_injured = Label::createWithSystemFont("半场", "fonts/arial.ttf", 35);
     addChild(lab_injured,5);
+    //1、加时  2、半场
+    switch (_i) {
+        case 1:
+            cout<<""<<endl;
+            break;
+            
+        default:
+            break;
+    }
     lab_injured->setPosition(Vec2(sprbg->getPosition().x, sprbg->getPosition().y-sprbg->getContentSize().height/2));
 }
 //network 异步请求与处理
 void HelloWorld::netClick(){
     HttpRequest * request = new HttpRequest();
-    request->setRequestType(HttpRequest::Type::POST);
+    request->setRequestType(HttpRequest::Type::GET);
     request->setUrl("www.baidu.com");
     char* ss = "hello,world";
     request->setResponseCallback(this, httpresponse_selector(HelloWorld::onHttpRequestCompleted));

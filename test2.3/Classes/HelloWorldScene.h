@@ -167,7 +167,7 @@ public:
     
     void alternate();//替补
     
-    void overtime();//加时与半场
+    void overtime(int _i);//加时与半场
     
     void JX_json();//测试json解析
     
@@ -177,6 +177,7 @@ public:
     
     void netClick();
     void onHttpRequestCompleted(Node *sender ,void *data);
+    void update_cc(float dt);
     //成员变量
 public:
     cocos2d::Size visibleSize;
@@ -204,6 +205,9 @@ public:
     Label* lab_st;//lab上的进攻状态
     Label* lab;//lab上的球队
     
+    char* name_match;//赛事的名称
+    char* name_teamA;//比赛的主场
+    char* name_teamB;//比赛的客场
 private:
     bool state_dq = true;//点球状态判定
     bool state_kongqiu = true;//控球状态判定
