@@ -205,9 +205,59 @@ public:
     Label* lab_st;//lab上的进攻状态
     Label* lab;//lab上的球队
     
-    char* name_match;//赛事的名称
-    char* name_teamA;//比赛的主场
-    char* name_teamB;//比赛的客场
+    char* name_match;
+    //赛事的名称
+    char* name_teamA;
+    //比赛的主场队名
+    int teamA_yc;
+    //黄牌次数
+    int teamA_rc;
+    //红牌次数
+    int teamA_yw;
+    //越位次数
+    int teamA_jg;
+    //进攻次数
+    int teamA_wxjg;
+    //危险进攻次数
+    int teamA_qq;
+    //球权次数
+    int teamA_sz;
+    //射正球门次数
+    int teamA_sw;
+    //射偏球门次数
+    int teamA_jq;
+    //进球次数
+    char* name_teamB;
+    //比赛的客场队名
+    int teamB_yc;
+    //黄牌次数
+    int teamB_rc;
+    //红牌次数
+    int teamB_yw;
+    //越位次数
+    int teamB_jg;
+    //进攻次数
+    int teamB_wxjg;
+    //危险进攻次数
+    int teamB_qq;
+    //球权次数
+    int teamB_sz;
+    //射正球门次数
+    int teamB_sw;
+    //射偏球门次数
+    int teamB_jq;
+    //进球次数
+    
+    float lab7_pro_percent;
+    //危险进攻比例
+    float lab8_pro_percent;
+    //进攻比例
+    float lab9_pro_percent;
+    //球权比例
+    float lab_sz_pro_percent;
+    //射正球门比例
+    float lab_sw_pro_percent;
+    //射偏球门比例
 private:
     bool state_dq = true;//点球状态判定
     bool state_kongqiu = true;//控球状态判定
@@ -216,6 +266,7 @@ private:
     
     int percent_jiaoqiu = 0;
     int percent_kongqiu = 0;
+    float android_height;
     
 };
 

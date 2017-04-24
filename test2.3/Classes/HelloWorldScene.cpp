@@ -6,6 +6,7 @@
 #include "network/HttpClient.h"
 #include "json/rapidjson.h"
 #include "json/Document.h"
+#include <stdlib.h>
 
 using namespace std;
 USING_NS_CC;
@@ -126,22 +127,59 @@ void HelloWorld::update(float time){
 }
 //UI布局初始化
 void HelloWorld::initUI(){
+    
+    name_match = "非洲世界杯";
+    name_teamA = "厄尔多瓜";
+    teamA_yc = 1;
+    teamA_rc = 1;
+    teamA_yw = 2;
+    teamA_jg = 33;
+    teamA_wxjg = 19;
+    teamA_qq = 52;
+    teamA_sz = 12;
+    teamA_sw = 10;
+    teamA_jq = 2;
+    name_teamB = "广州恒大";
+    teamB_yc = 2;
+    teamB_rc = 1;
+    teamB_yw = 3;
+    teamB_jg = 31;
+    teamB_wxjg = 12;
+    teamB_qq =43;
+    teamB_sz = 12;
+    teamB_sw = 21;
+    teamB_jq = 2;
+    lab9_pro_percent = (float)teamB_qq/((float)teamA_qq+(float)teamB_qq)*100;
+    lab8_pro_percent = (float)teamB_jg/((float)teamA_jg+(float)teamB_jg)*100;
+    lab7_pro_percent = (float)teamB_wxjg/((float)teamA_wxjg+(float)teamB_wxjg)*100;
+    lab_sz_pro_percent =(float)teamB_sz/((float)teamA_sz+(float)teamB_sz)*100;
+    lab_sw_pro_percent = (float)teamB_sw/((float)teamA_sw+(float)teamB_sw)*100;
+    
+    cout<<lab9_pro_percent<<lab8_pro_percent<<lab7_pro_percent<<lab_sz_pro_percent<<lab_sw_pro_percent<<endl;
+    
     visibleSize = Director::getInstance()->getVisibleSize();
     origin = Director::getInstance()->getVisibleOrigin();
-    
-    cout<<"hello"<<visibleSize.width<<"  "<<visibleSize.height<<endl;
-    
+    android_height = visibleSize.height;
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+    visibleSize.height -= 100;
     auto titlesp = Sprite::create("res/titlesp.png");
-    titlesp->setPosition(Vec2(visibleSize.width/2, visibleSize.height));
+    titlesp->setPosition(Vec2(visibleSize.width/2, android_height));
     titlesp->setAnchorPoint(Vec2(0.5, 1));
     auto titlesize = titlesp->getContentSize();
     titlesp->setScale(visibleSize.width/titlesize.width+1, 50/titlesize.height);
     addChild(titlesp,2);
     
     auto labtitle = Label::createWithSystemFont("竞猜", "fonts/arial.ttf", 32);
-    labtitle->setPosition(Vec2(visibleSize.width/2, visibleSize.height-25));
+    labtitle->setPosition(Vec2(visibleSize.width/2, android_height-25));
     labtitle->setAnchorPoint(Vec2(0.5, 0.5));
     addChild(labtitle,3);
+    auto btn = Button::create("res/u759.png");
+    btn->setPosition(Vec2(20, android_height));
+    btn->setAnchorPoint(Vec2(0.5,1));
+    //    btn->setScale(4);
+    btn->addClickEventListener(CC_CALLBACK_1(HelloWorld::menuCloseCallback, this));
+    addChild(btn,2);
+#endif
     
     auto bg = Sprite::create("res/baiju.png");
     //    bg->setOpacity(0.5);
@@ -156,22 +194,13 @@ void HelloWorld::initUI(){
     cout<<y<<endl;
     
     sprbg = Sprite::create("res/donghuabg.png");
-    sprbg->setPosition(Vec2(visibleSize.width/2, visibleSize.height-100));
+    sprbg->setPosition(Vec2(visibleSize.width/2, visibleSize.height-80));
     sprbg->setAnchorPoint(Vec2(0.5, 1));
 //    sprbg->setScale(visibleSize.width/sprbg->getContentSize().width);
     //    sprbg->setContentSize(Size(640,217.6));
     addChild(sprbg,2);
     auto sprsize = sprbg->getContentSize();
     cout<<sprsize.width<<"    "<<sprsize.height<<endl;
-    
-    auto btn = Button::create("res/u759.png");
-    btn->setPosition(Vec2(20, visibleSize.height));
-    btn->setAnchorPoint(Vec2(0.5,1));
-//    btn->setScale(4);
-    btn->addClickEventListener(CC_CALLBACK_1(HelloWorld::menuCloseCallback, this));
-    addChild(btn,2);
-    
-    
     
     football = Sprite::create("res/football.png");
     football->setPosition(Vec2(visibleSize.width/2, visibleSize.height-200));
@@ -402,68 +431,241 @@ void HelloWorld::kongqiu(int _i){
 //labUI的显示
 void HelloWorld::labUI()
 {
-    auto lab1 = Label::createWithSystemFont("0", "fonts/arial.ttf", 24 );
-    lab1->setPosition(Vec2(visibleSize.width/2-15, sprbg->getPosition().y+25));
-    lab1->setColor(Color3B::RED);
+    //主队名前的红矩形
+    auto lab_team_zc_bj = Sprite::create("res/hongT.png");
+    lab_team_zc_bj->setPosition(Vec2(origin.x+70+lab_team_zc_bj->getContentSize().width/2, visibleSize.height-40));
+    addChild(lab_team_zc_bj,4);
+    //客队名前的白矩形
+    auto lab_team_kc_hj = Sprite::create("res/baiT.png");
+    lab_team_kc_hj->setPosition(Vec2(visibleSize.width-70-lab_team_kc_hj->getContentSize().width/2, lab_team_zc_bj->getPosition().y));
+    addChild(lab_team_kc_hj,4);
+    //主场进球
+    auto lab1_sp = Sprite::create("res/huiju.png");
+    lab1_sp->setPosition(Vec2(visibleSize.width/2-5-lab1_sp->getContentSize().width/2, lab_team_kc_hj->getPosition().y));
+    addChild(lab1_sp,4);
+    char* lab1_jq;
+    sprintf(lab1_jq, "%d",teamA_jq);
+    auto lab1 = Label::createWithSystemFont(lab1_jq, "fonts/arial.ttf", 36 );
+    lab1->setPosition(lab1_sp->getPosition());
+    lab1->setColor(Color3B(250, 206, 0));
     addChild(lab1,4);
-    auto lab2 = Label::createWithSystemFont("-", "fonts/arial.ttf", 24 );
-    lab2->setPosition(Vec2(visibleSize.width/2, sprbg->getPosition().y+25));
-    lab2->setColor(Color3B::RED);
+    //客场进球
+    auto lab2_sp = Sprite::create("res/huiju.png");
+    lab2_sp->setPosition(Vec2(visibleSize.width/2+5+lab2_sp->getContentSize().width/2, lab_team_kc_hj->getPosition().y));
+    addChild(lab2_sp,4);
+    char* lab2_jq;
+    sprintf(lab2_jq, "%d",teamB_jq);
+    auto lab2 = Label::createWithSystemFont(lab2_jq, "fonts/arial.ttf", 36 );
+    lab2->setPosition(lab2_sp->getPosition());
+    lab2->setColor(Color3B(250, 206, 0));
     addChild(lab2,4);
-    auto lab3 = Label::createWithSystemFont("0", "fonts/arial.ttf", 24 );
-    lab3->setPosition(Vec2(visibleSize.width/2+15, sprbg->getPosition().y+25));
-    lab3->setColor(Color3B::RED);
-    addChild(lab3,4);
     
-    auto lab4 = Label::createWithSystemFont("阿尔巴尼克里克", "fonts/arial.ttf", 24 );
-    lab4->setPosition(Vec2(visibleSize.width/4, sprbg->getPosition().y+25));
-    lab4->setColor(Color3B::WHITE);
+    auto lab4 = Label::createWithSystemFont(name_teamA, "fonts/arial.ttf", 30 );
+    lab4->setPosition(Vec2(lab_team_zc_bj->getPosition().x+lab_team_zc_bj->getContentSize().width/2+16+lab4->getContentSize().width/2, lab_team_zc_bj->getPosition().y));
     addChild(lab4,4);
-    auto lab5 = Label::createWithSystemFont("洛根利泰柠", "fonts/arial.ttf", 24 );
-    lab5->setPosition(Vec2(visibleSize.width/4*3, sprbg->getPosition().y+25));
-    lab5->setColor(Color3B::WHITE);
+    auto lab5 = Label::createWithSystemFont(name_teamB, "fonts/arial.ttf", 30 );
+    lab5->setPosition(Vec2(lab_team_kc_hj->getPosition().x-lab_team_kc_hj->getContentSize().width/2-16-lab5->getContentSize().width/2, lab_team_kc_hj->getPosition().y));
     addChild(lab5,4);
     
-    auto lab6 = Label::createWithSystemFont("进攻", "fonts/arial.ttf", 28 );
-    lab6->setPosition(Vec2(visibleSize.width/5, sprbg->getPosition().y-25-sprbg->getContentSize().height));
-    lab6->setColor(Color3B::WHITE);
-    addChild(lab6,4);
-    
-    auto lab6_sp1 = Sprite::create("res/quan.png");
-    lab6_sp1->setPosition(Vec2(visibleSize.width/5, sprbg->getPosition().y-25-sprbg->getContentSize().height-60));
-    auto lab6_sp2 = Sprite::create("res/quan2.png");
-    auto lab6_pro = ProgressTimer::create(lab6_sp2);
-    lab6_pro->setPosition(Vec2(visibleSize.width/5, sprbg->getPosition().y-25-sprbg->getContentSize().height-60));
-    lab6_pro->setPercentage(60);
-    addChild(lab6_sp1,5);
-    addChild(lab6_pro,5);
-    
-    
+//***************************圈显百分比*************************
     auto lab7 = Label::createWithSystemFont("危险进攻", "fonts/arial.ttf", 28 );
-    lab7->setPosition(Vec2(visibleSize.width/2, sprbg->getPosition().y-25-sprbg->getContentSize().height));
+    lab7->setPosition(Vec2(visibleSize.width/2, sprbg->getPosition().y-30-sprbg->getContentSize().height));
+    lab7->setAnchorPoint(Vec2(0.5, 1));
     lab7->setColor(Color3B::WHITE);
     addChild(lab7,4);
     auto lab7_sp1 = Sprite::create("res/quan.png");
-    lab7_sp1->setPosition(Vec2(visibleSize.width/2, sprbg->getPosition().y-25-sprbg->getContentSize().height-60));
+    lab7_sp1->setPosition(Vec2(visibleSize.width/2, lab7->getPosition().y-lab7->getContentSize().height-20-lab7_sp1->getContentSize().height/2));
     auto lab7_sp2 = Sprite::create("res/quan2.png");
-    auto lab7_pro = ProgressTimer::create(lab6_sp2);
-    lab7_pro->setPosition(Vec2(visibleSize.width/2, sprbg->getPosition().y-25-sprbg->getContentSize().height-60));
-    lab7_pro->setPercentage(60);
+    auto lab7_pro = ProgressTimer::create(lab7_sp2);
+    lab7_pro->setPosition(Vec2(visibleSize.width/2, lab7->getPosition().y-lab7->getContentSize().height-20-lab7_sp1->getContentSize().height/2));
+//****比例****
+    lab7_pro->setPercentage(lab7_pro_percent);
+//*****类型转换****
+    string lab7_score1_teamA = to_string(teamA_wxjg);
+    string lab7_score2_teamB = to_string(teamB_wxjg);
+//*****类型转换****
+    auto lab7_score1 = Label::createWithSystemFont(lab7_score1_teamA, "fonts/arial.ttf", 28);
+    auto lab7_score2 = Label::createWithSystemFont(lab7_score2_teamB, "fonts/arial.ttf", 28);
+    lab7_score1->setPosition(Vec2(visibleSize.width/2-10-lab7_sp1->getContentSize().width/2-lab7_score1->getContentSize().width/2, lab7->getPosition().y-lab7->getContentSize().height-20-lab7_sp1->getContentSize().height/2));
+    lab7_score2->setPosition(Vec2(visibleSize.width/2+10+lab7_sp1->getContentSize().width/2+lab7_score2->getContentSize().width/2, lab7->getPosition().y-lab7->getContentSize().height-20-lab7_sp1->getContentSize().height/2));
+    addChild(lab7_score2,5);
+    addChild(lab7_score1,5);
     addChild(lab7_sp1,5);
     addChild(lab7_pro,5);
     
-    auto lab8 = Label::createWithSystemFont("球权%", "fonts/arial.ttf", 28 );
-    lab8->setPosition(Vec2(visibleSize.width/5*4, sprbg->getPosition().y-25-sprbg->getContentSize().height));
+//*****类型转换****
+    string lab8_score1_teamA = to_string(teamA_jg);
+    string lab8_score2_teamB = to_string(teamB_jg);
+//*****类型转换****
+    auto lab8_score1 = Label::createWithSystemFont(lab8_score1_teamA, "fonts/arial.ttf", 28);
+    lab8_score1->setPosition(Vec2(origin.x+30+lab8_score1->getContentSize().width/2, lab7_score1->getPosition().y));
+    auto lab8_sp1 = Sprite::create("res/quan.png");
+    lab8_sp1->setPosition(Vec2(lab8_score1->getPosition().x+lab8_score1->getContentSize().width/2+10+lab8_sp1->getContentSize().width/2, lab8_score1->getPosition().y));
+    auto lab8_sp2 = Sprite::create("res/quan2.png");
+    auto lab8_pro = ProgressTimer::create(lab7_sp2);
+    lab8_pro->setPosition(Vec2(lab8_score1->getPosition().x+lab8_score1->getContentSize().width/2+10+lab8_sp1->getContentSize().width/2, lab8_score1->getPosition().y));
+//****比例****
+    lab8_pro->setPercentage(lab8_pro_percent);
+    auto lab8_score2 = Label::createWithSystemFont(lab8_score2_teamB, "fonts/arial.ttf", 28);
+    lab8_score2->setPosition(Vec2(lab8_sp1->getPosition().x+lab8_sp1->getContentSize().width/2+10+lab8_score2->getContentSize().width/2, lab8_sp1->getPosition().y));
+    auto lab8 = Label::createWithSystemFont("进攻", "fonts/arial.ttf", 28 );
+    lab8->setPosition(Vec2(lab8_sp1->getPosition().x, lab7->getPosition().y));
+    lab8->setAnchorPoint(Vec2(0.5, 1));
     lab8->setColor(Color3B::WHITE);
     addChild(lab8,4);
-    auto lab8_sp1 = Sprite::create("res/quan.png");
-    lab8_sp1->setPosition(Vec2(visibleSize.width/5*4, sprbg->getPosition().y-25-sprbg->getContentSize().height-60));
-    auto lab8_sp2 = Sprite::create("res/quan2.png");
-    auto lab8_pro = ProgressTimer::create(lab6_sp2);
-    lab8_pro->setPosition(Vec2(visibleSize.width/5*4, sprbg->getPosition().y-25-sprbg->getContentSize().height-60));
-    lab8_pro->setPercentage(60);
+    addChild(lab8_score2,5);
+    addChild(lab8_score1,5);
     addChild(lab8_sp1,5);
     addChild(lab8_pro,5);
+    
+//*****类型转换****
+    string lab9_score1_teamA = to_string(teamA_qq);
+    string lab9_score2_teamB = to_string(teamB_qq);
+    
+//*****类型转换****
+    auto lab9_score2 = Label::createWithSystemFont(lab9_score2_teamB, "fonts/arial.ttf", 28);
+    lab9_score2->setPosition(Vec2(visibleSize.width-30-lab9_score2->getContentSize().width/2, lab7_score1->getPosition().y));
+    auto lab9_sp1 = Sprite::create("res/quan.png");
+    lab9_sp1->setPosition(Vec2(lab9_score2->getPosition().x-lab9_score2->getContentSize().width/2-10-lab9_sp1->getContentSize().width/2, lab9_score2->getPosition().y));
+    auto lab9_sp2 = Sprite::create("res/quan2.png");
+    auto lab9_pro = ProgressTimer::create(lab7_sp2);
+    lab9_pro->setPosition(Vec2(lab9_score2->getPosition().x-lab9_score2->getContentSize().width/2-10-lab9_sp1->getContentSize().width/2, lab9_score2->getPosition().y));
+//****比例****
+    lab9_pro->setPercentage(lab9_pro_percent);
+    
+    auto lab9_score1 = Label::createWithSystemFont(lab9_score1_teamA, "fonts/arial.ttf", 28);
+    lab9_score1->setPosition(Vec2(lab9_sp1->getPosition().x-lab9_sp1->getContentSize().width/2-10-lab9_score2->getContentSize().width/2, lab9_sp1->getPosition().y));
+    auto lab9 = Label::createWithSystemFont("球权%", "fonts/arial.ttf", 28 );
+    lab9->setPosition(Vec2(lab9_sp1->getPosition().x, lab7->getPosition().y));
+    lab9->setAnchorPoint(Vec2(0.5, 1));
+    lab9->setColor(Color3B::WHITE);
+    addChild(lab9,4);
+    addChild(lab9_score2,5);
+    addChild(lab9_score1,5);
+    addChild(lab9_sp1,5);
+    addChild(lab9_pro,5);
+    
+//***************************圈显百分比*************************
+//***************************场上数据显示*************************
+    //*****类型转换****
+    string lab_sz_score1_teamA = to_string(teamA_sz);
+    string lab_sz_score2_teamB = to_string(teamB_sz);
+    //*****类型转换****
+    auto lab_sz = Label::createWithSystemFont("射正球门", "fonts/arial.ttf", 22);
+    lab_sz->setPosition(Vec2(lab7_sp1->getPosition().x, lab7_sp1->getPosition().y-lab7_sp1->getContentSize().height/2-30-lab_sz->getContentSize().height/2));
+    addChild(lab_sz,5);
+    auto lab_sz_sp1 = Sprite::create("res/hongju.png");
+    lab_sz_sp1->setPosition(Vec2(lab_sz->getPosition().x, lab_sz->getPosition().y-lab_sz->getContentSize().height/2-14-lab_sz_sp1->getContentSize().height/2));
+    addChild(lab_sz_sp1,4);
+    auto lab_sz_sp2 = Sprite::create("res/baitiao.png");
+    auto lab_sz_pro = ProgressTimer::create(lab_sz_sp2);
+    lab_sz_pro->setType(kCCProgressTimerTypeBar);
+    lab_sz_pro->setPosition(lab_sz_sp1->getPosition());
+    lab_sz_pro->setMidpoint(Vec2(1, 0));//水平方向（1，y）表示从右向左，（0.y）表示从左向右
+    lab_sz_pro->setBarChangeRate(Vec2(1, 0));//纵向
+//***比例****
+    
+    lab_sz_pro->setPercentage(lab_sz_pro_percent);
+    addChild(lab_sz_pro,5);
+    auto lab_sz_score1 = Label::createWithSystemFont(lab_sz_score1_teamA, "fonts/arial.ttf", 28);
+    lab_sz_score1->setPosition(Vec2(lab_sz_sp1->getPosition().x-lab_sz_sp1->getContentSize().width/2-10-lab_sz_score1->getContentSize().width/2, lab_sz_sp1->getPosition().y));
+    addChild(lab_sz_score1,5);
+    auto lab_sz_score2 = Label::createWithSystemFont(lab_sz_score2_teamB, "fonts/arial.ttf", 28);
+    lab_sz_score2->setPosition(Vec2(lab_sz_sp1->getPosition().x+lab_sz_sp1->getContentSize().width/2+10+lab_sz_score2->getContentSize().width/2, lab_sz_sp1->getPosition().y));
+    addChild(lab_sz_score2,5);
+    //主客场红牌、黄牌、越位标示显示
+    auto lab_zc_yc = Sprite::create("res/yc.png");
+    lab_zc_yc->setPosition(Vec2(lab_sz_score1->getPosition().x-lab_sz_score1->getContentSize().width/2-70-lab_zc_yc->getContentSize().width/2, lab_sz_score1->getPosition().y));
+    addChild(lab_zc_yc,5);
+    auto lab_zc_rc = Sprite::create("res/rc.png");
+    lab_zc_rc->setPosition(Vec2(lab_zc_yc->getPosition().x-lab_zc_yc->getContentSize().width/2-40-lab_zc_rc->getContentSize().width/2, lab_sz_score1->getPosition().y));
+    addChild(lab_zc_rc,5);
+    auto lab_zc_q1 = Sprite::create("res/baiqi.png");
+    lab_zc_q1->setPosition(Vec2(lab_zc_rc->getPosition().x-lab_zc_rc->getContentSize().width/2-40-lab_zc_q1->getContentSize().width/2, lab_sz_score1->getPosition().y));
+    addChild(lab_zc_q1,5);
+    cout<<"旗子与旗子之间的距离为："<<lab8->getPosition().x-(lab_sz_score1->getPosition().x-lab_sz_score1->getContentSize().width/2-70-lab_zc_yc->getContentSize().width/2)<<endl;
+    
+    auto lab_kc_yc = Sprite::create("res/yc.png");
+    lab_kc_yc->setPosition(Vec2(lab_sz_score2->getPosition().x+lab_sz_score2->getContentSize().width/2+70+lab_kc_yc->getContentSize().width/2, lab_sz_score1->getPosition().y));
+    addChild(lab_kc_yc,5);
+    auto lab_kc_rc = Sprite::create("res/rc.png");
+    lab_kc_rc->setPosition(Vec2(lab_kc_yc->getPosition().x+lab_kc_yc->getContentSize().width/2+40+lab_kc_rc->getContentSize().width/2, lab_sz_score1->getPosition().y));
+    addChild(lab_kc_rc,5);
+    auto lab_kc_q1 = Sprite::create("res/baiqi.png");
+    lab_kc_q1->setPosition(Vec2(lab_kc_rc->getPosition().x+lab_kc_rc->getContentSize().width/2+40+lab_kc_q1->getContentSize().width/2, lab_sz_score1->getPosition().y));
+    addChild(lab_kc_q1,5);
+    
+    //射偏球门--
+    auto lab_sw = Label::createWithSystemFont("射偏球门", "fonts/arial.ttf", 22);
+    lab_sw->setPosition(Vec2(lab7_sp1->getPosition().x, lab_sz_sp1->getPosition().y-lab_sz_sp1->getContentSize().height/2-24-lab_sw->getContentSize().height/2));
+    addChild(lab_sw,5);
+    auto lab_sw_sp1 = Sprite::create("res/hongju.png");
+    lab_sw_sp1->setPosition(Vec2(lab_sw->getPosition().x, lab_sw->getPosition().y-lab_sw->getContentSize().height/2-14-lab_sw_sp1->getContentSize().height/2));
+    addChild(lab_sw_sp1,4);
+    auto lab_sw_sp2 = Sprite::create("res/baitiao.png");
+    auto lab_sw_pro = ProgressTimer::create(lab_sw_sp2);
+    lab_sw_pro->setType(kCCProgressTimerTypeBar);
+    lab_sw_pro->setPosition(lab_sw_sp1->getPosition());
+    lab_sw_pro->setMidpoint(Vec2(1, 0));//水平方向（1，y）表示从右向左，（0.y）表示从左向右
+    lab_sw_pro->setBarChangeRate(Vec2(1, 0));//纵向
+//***比例****
+    
+    lab_sw_pro->setPercentage(lab_sw_pro_percent);
+    addChild(lab_sw_pro,5);
+    //*****类型转换****
+    string lab_sw_score1_teamA = to_string(teamA_sw);
+    string lab_sw_score2_teamB = to_string(teamB_sw);
+//    sprintf(lab_sw_score1_teamA, "%d",teamA_sw);
+//    sprintf(lab_sw_score2_teamB, "%d",teamB_sw);
+    //*****类型转换****
+    auto lab_sw_score1 = Label::createWithSystemFont(lab_sw_score1_teamA, "fonts/arial.ttf", 28);
+    lab_sw_score1->setPosition(Vec2(lab_sw_sp1->getPosition().x-lab_sw_sp1->getContentSize().width/2-10-lab_sw_score1->getContentSize().width/2, lab_sw_sp1->getPosition().y));
+    addChild(lab_sw_score1,5);
+    auto lab_sw_score2 = Label::createWithSystemFont(lab_sw_score2_teamB, "fonts/arial.ttf", 28);
+    lab_sw_score2->setPosition(Vec2(lab_sw_sp1->getPosition().x+lab_sw_sp1->getContentSize().width/2+10+lab_sw_score2->getContentSize().width/2, lab_sw_sp1->getPosition().y));
+    addChild(lab_sw_score2,5);
+    //主客场红牌、黄牌、越位次数显示
+    //*****类型转换****
+    string lab_zc_r_c_teamA = to_string(teamA_rc);
+    string lab_zc_y_c_teamA = to_string(teamA_yc);
+    string lab_zc_q_c_teamA = to_string(teamA_yw);
+    string lab_kc_r_c_teamB = to_string(teamB_rc);
+    string lab_kc_y_c_teamB = to_string(teamB_yc);
+    string lab_kc_q_c_teamB = to_string(teamB_yw);
+//    sprintf(lab_zc_r_c_teamA, "%d",teamA_rc);
+//    sprintf(lab_zc_y_c_teamA, "%d",teamA_yc);
+//    sprintf(lab_zc_q_c_teamA, "%d",teamA_yw);
+//    sprintf(lab_kc_r_c_teamB, "%d",teamB_rc);
+//    sprintf(lab_kc_y_c_teamB, "%d",teamB_yc);
+//    sprintf(lab_kc_q_c_teamB, "%d",teamB_yw);
+    //*****类型转换****
+    //主场红牌次数
+    auto lab_zc_r_c = Label::createWithSystemFont(lab_zc_r_c_teamA, "fonts/arial.ttf", 28);
+    lab_zc_r_c->setPosition(Vec2(lab_zc_rc->getPosition().x, lab_sw_sp1->getPosition().y));
+    addChild(lab_zc_r_c,5);
+    //主场黄牌次数
+    auto lab_zc_y_c = Label::createWithSystemFont(lab_zc_y_c_teamA, "fonts/arial.ttf", 28);
+    lab_zc_y_c->setPosition(Vec2(lab_zc_yc->getPosition().x, lab_sw_sp1->getPosition().y));
+    addChild(lab_zc_y_c,5);
+    //主场越位次数
+    auto lab_zc_q_c = Label::createWithSystemFont(lab_zc_q_c_teamA, "fonts/arial.ttf", 28);
+    lab_zc_q_c->setPosition(Vec2(lab_zc_q1->getPosition().x, lab_sw_sp1->getPosition().y));
+    addChild(lab_zc_q_c,5);
+    
+    //客场红牌次数
+    auto lab_kc_r_c = Label::createWithSystemFont(lab_kc_r_c_teamB, "fonts/arial.ttf", 28);
+    lab_kc_r_c->setPosition(Vec2(lab_kc_rc->getPosition().x, lab_sw_sp1->getPosition().y));
+    addChild(lab_kc_r_c,5);
+    //客场黄牌次数
+    auto lab_kc_y_c = Label::createWithSystemFont(lab_kc_y_c_teamB, "fonts/arial.ttf", 28);
+    lab_kc_y_c->setPosition(Vec2(lab_kc_yc->getPosition().x, lab_sw_sp1->getPosition().y));
+    addChild(lab_kc_y_c,5);
+    //客场越位次数
+    auto lab_kc_q_c = Label::createWithSystemFont(lab_kc_q_c_teamB, "fonts/arial.ttf", 28);
+    lab_kc_q_c->setPosition(Vec2(lab_kc_q1->getPosition().x, lab_sw_sp1->getPosition().y));
+    addChild(lab_kc_q_c,5);
+//***************************场上数据显示*************************
+    
 
     lab_sp = Sprite::create("res/baiju.png");
     lab_sp->setPosition(Vec2(0, 0));
