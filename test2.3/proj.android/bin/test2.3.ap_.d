@@ -17,9 +17,6 @@
 /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/fonts/arial.ttf \
 /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/fonts/Marker Felt.ttf \
 /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/res/1.png \
-/Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/res/12.png \
-/Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/res/123.png \
-/Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/res/124.png \
 /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/res/baiju.png \
 /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/res/baiqi.png \
 /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/res/baiT.png \
@@ -39,12 +36,17 @@
 /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/res/jingong2.png \
 /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/res/jinqiu.png \
 /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/res/kqyinying.png \
+/Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/res/men.png \
 /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/res/qiumen.png \
 /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/res/quan.png \
 /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/res/quan2.png \
 /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/res/rc.png \
+/Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/res/shezheng.png \
+/Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/res/tibu.png \
 /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/res/titlesp.png \
 /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/res/u759.png \
 /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/res/weixianjingong.png \
 /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/res/yc.png \
+/Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/res/yuewei.png \
+/Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/res/zhunxing.png \
 /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/bin/AndroidManifest.xml \

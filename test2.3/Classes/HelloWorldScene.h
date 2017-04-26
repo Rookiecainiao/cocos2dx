@@ -2,6 +2,8 @@
 #define __HELLOWORLD_SCENE_H__
 
 #include "cocos2d.h"
+#include <string>
+using namespace std;
 USING_NS_CC;
 enum FootballCaseType {
     CASE_Start_RT1 = 100000,// 上半场开始
@@ -125,6 +127,11 @@ enum FootballCaseType {
    
     
 };
+struct caseState
+{
+    int caseStats;
+    long long caseTimes;
+};
 class HelloWorld : public cocos2d::Layer
 {
 public:
@@ -138,7 +145,7 @@ public:
     // implement the "static create()" method manually
     CREATE_FUNC(HelloWorld);
     
-    void update(float time);
+    
     
     //常用方法
 public:
@@ -146,7 +153,7 @@ public:
     
     void startUI();//开赛前的信息
     
-    void update_dianqiu(float dt);//点球，角球，球门球实时监测
+    
     void jiaoqiu(int _state);//角球方法，点球，角球，球门球，掷界外球
     
     void kongqiu(int _i);//控球方法 状态：1、控球 2、进攻 3、危险进攻
@@ -154,7 +161,6 @@ public:
     
     void labUI();//界面labUI的方法
     
-    void update_q(float dt);//监测球的位置，当球到达指定位置后，执行球没有移动的时候的阴影动作
     void qshadow(Point _point);//球没有移动的时候的阴影动作
     
     void jinqiu(int _i);//进球的时的进球动画
@@ -165,19 +171,29 @@ public:
     
     void injured();//受伤
     
-    void alternate();//替补
+    void alternate(int _i);//替补
     
     void overtime(int _i);//加时与半场
     
     void JX_json();//测试json解析
     
     void footballCaseType(int _FootballCaseType);
+    
+    void update(float time);
+    
+    //点球，角球，球门球实时监测
+    void update_dianqiu(float dt);
+    //监测球的位置，当球到达指定位置后，执行球没有移动的时候的阴影动作
+    void update_q(float dt);
+    //球场时间显示
+    void update_timer(float dt);
+    
 public:
     void callback1(Node* sender);
     
     void netClick();
     void onHttpRequestCompleted(Node *sender ,void *data);
-    void update_cc(float dt);
+    
     //成员变量
 public:
     cocos2d::Size visibleSize;
@@ -198,13 +214,15 @@ public:
     cocos2d::Label*labstr1;
     
     Node*node_lab;//
+    
     Node*node_jinqiu;//进球node
     Node*pai_spr;//红黄牌node
     Node*startUInode;//显示比赛开始时的lab情况
     Sprite*lab_sp;//lab上的矩形
     Label* lab_st;//lab上的进攻状态
     Label* lab;//lab上的球队
-    
+    //球场上的时间显示
+    Label* match_timer;
     char* name_match;
     //赛事的名称
     char* name_teamA;
@@ -258,6 +276,11 @@ public:
     //射正球门比例
     float lab_sw_pro_percent;
     //射偏球门比例
+    
+    //时间——分
+    int match_timer_m;
+    //时间——秒
+    int match_timer_s;
 private:
     bool state_dq = true;//点球状态判定
     bool state_kongqiu = true;//控球状态判定
@@ -267,6 +290,9 @@ private:
     int percent_jiaoqiu = 0;
     int percent_kongqiu = 0;
     float android_height;
+    
+    vector<caseState> vec;
+
     
 };
 
