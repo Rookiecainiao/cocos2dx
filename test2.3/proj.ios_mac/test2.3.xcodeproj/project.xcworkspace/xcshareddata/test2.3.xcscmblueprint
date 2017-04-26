@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "70530153382DD510F554D7518BE0546B2E6D07E8",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "A3776B7DD3BAE002D6EEF7207DB646405AF2B9C8" : 9223372036854775807,
+    "70530153382DD510F554D7518BE0546B2E6D07E8" : 9223372036854775807
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "B6E0F050-A68E-44F5-B71D-D575644C2C5F",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "A3776B7DD3BAE002D6EEF7207DB646405AF2B9C8" : "",
+    "70530153382DD510F554D7518BE0546B2E6D07E8" : "cocos2dx\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "test2.3",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "test2.3\/proj.ios_mac\/test2.3.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/Rookiecainiao\/cocos2dx.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "70530153382DD510F554D7518BE0546B2E6D07E8"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/Rookiecainiao\/Git_library.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "A3776B7DD3BAE002D6EEF7207DB646405AF2B9C8"
+    }
+  ]
+}

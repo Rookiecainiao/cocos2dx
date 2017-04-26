@@ -7,7 +7,6 @@
 #include "json/rapidjson.h"
 #include "json/Document.h"
 #include <stdlib.h>
-
 using namespace std;
 USING_NS_CC;
 using namespace ui;
@@ -64,11 +63,11 @@ bool HelloWorld::init()
     match_timer_s = 0;
     match_timer_m = 0;
     schedule(schedule_selector(HelloWorld::update_timer),1);
-    
-    
+    netClick();
+    schedule(schedule_selector(HelloWorld::update), 60);
     name_teamA = "厄尔多瓜 20岁以下";
     this->setCascadeOpacityEnabled(true);
-    initUI();
+//    initUI();
    
     cc_state=0;
 //    schedule(schedule_selector(HelloWorld::update_q), 0.5);
@@ -83,6 +82,31 @@ void HelloWorld::update_timer(float dt){
     }
     string timer = String::createWithFormat("%02d:%02d",match_timer_m,match_timer_s)->getCString();
     match_timer->setString(timer);
+    if (sizeofvec) {
+        cout<<"时间"<<match_timer_m<<":"<<match_timer_s<<"--"<<vec.end()->caseTimes_m<<":"<<vec.end()->caseTimes_s<<"--size:"<<vec.size()<<"--"<<sizeofvec<<endl;
+        if (vec.end()->caseTimes_s == match_timer_s&&vec.end()->caseTimes_m == match_timer_m) {
+            footballCaseType(vec.end()->caseStats);
+            if (vec.size()) {
+                vec.pop_back();
+            }
+            sizeofvec--;
+        }
+        if (vec.end()->caseTimes_m<match_timer_m) {
+            footballCaseType(vec.end()->caseStats);
+            if (vec.size()) {
+                vec.pop_back();
+            }
+            sizeofvec--;
+        }else if(vec.end()->caseTimes_m==match_timer_m&&vec.end()->caseTimes_s < match_timer_s){
+            footballCaseType(vec.end()->caseStats);
+            if (vec.size()) {
+                vec.pop_back();
+            }
+            sizeofvec--;
+        }
+    }else{
+        log("*****阶段结束******");
+    }
 }
 //开局信息UI及出现特效
 void HelloWorld::startUI(){
@@ -155,13 +179,8 @@ void HelloWorld::callback1(Node* sender){
     startUInode->removeFromParent();
 }
 void HelloWorld::update(float time){
-    if (vec.size()) {
-        vec.pop_back();
-        footballCaseType(vec.end()->caseStats);
-    }else{
-        unschedule(schedule_selector(HelloWorld::update));
-    }
-    
+    netClick();
+    cout<<"this is main update"<<endl;
 }
 //UI布局初始化
 void HelloWorld::initUI(){
@@ -191,7 +210,7 @@ void HelloWorld::initUI(){
     visibleSize = Director::getInstance()->getVisibleSize();
     origin = Director::getInstance()->getVisibleOrigin();
     android_height = visibleSize.height;
-//#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
     visibleSize.height -= 100;
     auto titlesp = Sprite::create("res/titlesp.png");
     titlesp->setPosition(Vec2(visibleSize.width/2, android_height));
@@ -210,7 +229,7 @@ void HelloWorld::initUI(){
     //    btn->setScale(4);
     btn->addClickEventListener(CC_CALLBACK_1(HelloWorld::menuCloseCallback, this));
     addChild(btn,2);
-//#endif
+#endif
 //    auto button_callback = Button::create("res/u759.png");
 //    button_callback->setPosition(Vec2(380, 400));
 //    addChild(button_callback,2);
@@ -232,10 +251,13 @@ void HelloWorld::initUI(){
     
     string timer = String::createWithFormat("%02d:%02d",match_timer_m,match_timer_s)->getCString();
     match_timer = Label::createWithSystemFont(timer, "fonts/arial.ttf", 24);
-    match_timer->setPosition(sprbg->getPosition());
+    match_timer->setPosition(Vec2(sprbg->getPosition().x, sprbg->getPosition().y-match_timer->getContentSize().height/2));
     addChild(match_timer,5);
+    auto timebg = Sprite::create("res/timebg.png");
+    timebg->setPosition(Vec2(sprbg->getPosition().x, sprbg->getPosition().y-timebg->getContentSize().height/2));
+    addChild(timebg,4);
     
-    football = Sprite::create("res/football.png");
+    football = Sprite::create("res/baiyuan.png");
     football->setPosition(Vec2(visibleSize.width/2, visibleSize.height-200));
     football->setVisible(false);
     addChild(football,4);
@@ -245,10 +267,8 @@ void HelloWorld::initUI(){
     auto action1=Spawn::create(ballaction,ballaction2, NULL);
     auto action2=Spawn::create(ballaction,ballaction2->reverse(), NULL);
 //    football->runAction(RepeatForever::create(Sequence::create(action1,action2, NULL)));
-    
-    auto ballposition = football->getPosition();
+
    
-    
     Jqshadow = Sprite::create("res/1.png");
     progress1 = ProgressTimer::create(Jqshadow);
     progress1->setPosition(Vec2(0, 700));
@@ -266,7 +286,6 @@ void HelloWorld::initUI(){
     sp_wxjg->setOpacity(100);
     sp_kq = Sprite::create("res/kqyinying.png");
     progress = ProgressTimer::create(sp_kq);
-//    progress->setScale(2.75);
     progress->setPercentage(0);
     progress->setType(kCCProgressTimerTypeBar);
     progress->setOpacity(100);
@@ -278,7 +297,6 @@ void HelloWorld::initUI(){
     progress1->setVisible(false);
     addChild(progress1,3);
     addChild(progress,3);
-//    scheduleUpdate();
     
     labUI();
 }
@@ -301,6 +319,8 @@ void HelloWorld::jiaoqiu(int _state){
     football->setVisible(true);
     auto sprbgvisible = sprbg->getContentSize();
     auto sprbgorigin = sprbg->getPosition();
+    //界外球精灵
+    auto jiewai = Sprite::create("res/jiewaiqiu.png");
     percent_jiaoqiu=100;
     switch (_state) {
         case 1:
@@ -374,9 +394,19 @@ void HelloWorld::jiaoqiu(int _state){
             lab_move(Vec2(sprbgorigin.x-100, sprbgorigin.y-sprbgvisible.height/2));
             break;
         case 11:
+            progress1->setSprite(jiewai);
+            progress1->setPosition(Vec2(sprbgorigin.x, sprbgorigin.y-sprbgvisible.height));
+            progress1->setRotation(30);
+            lab_state(1,"掷界外球");
+            lab_move(Vec2(sprbgorigin.x, sprbgorigin.y-sprbgvisible.height/2));
             cout<<"主掷界外球"<<endl;
             break;
         case 12:
+            progress1->setSprite(jiewai);
+            progress1->setPosition(Vec2(sprbgorigin.x, sprbgorigin.y));
+            progress1->setRotation(-150);
+            lab_state(2,"掷界外球");
+            lab_move(Vec2(sprbgorigin.x, sprbgorigin.y-sprbgvisible.height/2));
             cout<<"客掷界外球"<<endl;
             break;
         default:
@@ -384,6 +414,7 @@ void HelloWorld::jiaoqiu(int _state){
     }
     football->stopAllActions();
     football->setPosition(progress1->getPosition());
+    qshadow(football->getPosition());
 }
 //控球状态的阴影特效变换
 void HelloWorld::kongqiu(int _i){
@@ -510,7 +541,7 @@ void HelloWorld::labUI()
     auto lab5 = Label::createWithSystemFont(name_teamB, "fonts/arial.ttf", 30 );
     lab5->setPosition(Vec2(lab_team_kc_hj->getPosition().x-lab_team_kc_hj->getContentSize().width/2-16-lab5->getContentSize().width/2, lab_team_kc_hj->getPosition().y));
     addChild(lab5,4);
-    
+/*
 //***************************圈显百分比*************************
     auto lab7 = Label::createWithSystemFont("危险进攻", "fonts/arial.ttf", 28 );
     lab7->setPosition(Vec2(visibleSize.width/2, sprbg->getPosition().y-30-sprbg->getContentSize().height));
@@ -752,7 +783,7 @@ void HelloWorld::labUI()
     lab_kc_q_c->setPosition(Vec2(lab_kc_q1->getPosition().x, lab_sw_sp1->getPosition().y));
     addChild(lab_kc_q_c,5);
 //***************************场上数据显示*************************
-    
+*/
 
     lab_sp = Sprite::create("res/baiju.png");
     lab_sp->setPosition(Vec2(0, 0));
@@ -774,128 +805,7 @@ void HelloWorld::labUI()
 
 void HelloWorld::menuCloseCallback(Ref* pSender)
 {
-    netClick();
-//    alternate(2);
-//    pai_RY(5);
-//    pai_RY(6);
-    
-    
-//    cc_state++;
-//    switch (cc_state) {
-//        case 1:
-//            jinqiu(1);
-//            break;
-//        case 2:
-//            jinqiu(2);
-//            break;
-//        case 3:
-//            jinqiu(3);
-//            break;
-//        case 4:
-//            jinqiu(4);
-//            break;
-//        case 5:
-//            jinqiu(5);
-//            break;
-//        case 6:
-//            jinqiu(6);
-//            cc_state=0;
-//            break;
-//        default:
-//            break;
-//    }
-////    this->removeAllChildren();
-//    cout<<"finish"<<endl;
-//    if (UserDefault::getInstance()->getBoolForKey("isExisted")) {
-//        cout<<"this had userdefault"<<endl;
-//        cout<<UserDefault::getInstance()->getStringForKey("string")<<endl;
-//        UserDefault::getInstance()->setBoolForKey("isExisted", false);
-//    }else{
-//        cout<<"this had no userdefault"<<endl;
-//        UserDefault::getInstance()->setStringForKey("string", "helloworld");
-//        UserDefault::getInstance()->setBoolForKey("isExisted", true);
-//        UserDefault::getInstance()->flush();
-//    }
-//    cout<<cc_state<<endl;
-//    if (cc_state>21) {
-//        cc_state=0;
-//    }
-//    switch (cc_state) {
-//        case 1:
-//            footballCaseType(CASE_Start_RT1);
-//            break;
-//        case 2:
-//            footballCaseType(CASE_AT1);
-//            break;
-//        case 3:
-//            footballCaseType(CASE_DAT1);
-//            break;
-//        case 4:
-//            footballCaseType(CASE_SAFE1);
-//            break;
-//        case 5:
-//            footballCaseType(CASE_AT2);
-//            break;
-//        case 6:
-//            footballCaseType(CASE_DAT2);
-//            break;
-//        case 7:
-//            footballCaseType(CASE_SAFE2);
-//            break;
-//        case 8:
-//            footballCaseType(CASE_CR2);
-//            break;
-//        case 9:
-//            footballCaseType(CASE_GK2);
-//            break;
-//        case 10:
-//            footballCaseType(CASE_GK1);
-//            break;
-//        case 11:
-//            footballCaseType(CASE_RC1);
-//            break;
-//        case 12:
-//            footballCaseType(CASE_CR1);
-//            break;
-//        case 13:
-//            footballCaseType(CASE_YC1);
-//            break;
-//        case 14:
-//            footballCaseType(CASE_DFK2);
-//            break;
-//        case 15:
-//            footballCaseType(CASE_GOAL2);
-//            break;
-//        case 16:
-//            footballCaseType(CASE_GOAL1);
-//            break;
-//        case 17:
-//            footballCaseType(CASE_DFK1);
-//            break;
-//        case 18:
-//            footballCaseType(CASE_FK1);
-//            break;
-//        case 19:
-//            footballCaseType(CASE_RC2);
-//            break;
-//        case 20:
-//            footballCaseType(CASE_YC2);
-//            break;
-//        case 21:
-//            footballCaseType(CASE_GK2);
-//            break;
-//            
-//        default:
-//            break;
-//    }
-//    this->removeAllChildren();
-//    kongqiu(cc_state);
-//    jinqiu();
-//    jiaoqiu(4);
-//    netClick();
-//    JX_json();
-//    footballCaseType(CASE_Start_RT1);
-    
+    Director::getInstance()->end();
 }
 //球移动到指定的位置
 void HelloWorld::move(Point _point){
@@ -920,8 +830,8 @@ void HelloWorld::qshadow(Point _point){
         shadow2->setPosition(Vec2(football->getPosition().x, football->getPosition().y));
         addChild(shadow2,3);
         shadow2->setOpacity(80);
-        auto act1 = ScaleBy::create(0.5, 7);
-        auto act2 = ScaleBy::create(1, 14);
+        auto act1 = ScaleBy::create(0.5, 2);
+        auto act2 = ScaleBy::create(1, 3);
         shadow1->runAction(RepeatForever::create(Sequence::create(act1,DelayTime::create(1),act1->reverse(),DelayTime::create(1), NULL)));
         shadow2->runAction(RepeatForever::create(Sequence::create(act2,DelayTime::create(1),act2->reverse(), NULL)));
     }
@@ -1265,48 +1175,73 @@ void HelloWorld::onHttpRequestCompleted(Node *sender ,void *data){
     }
     
 //*************case******************
-//    log("%s",doc["data"]["case"][0]["caseType"].GetString());
-//    string s = doc["data"]["case"][0]["caseType"].GetString();
-//    footballCaseType(atoi(s.c_str()));
-//    vector<char>* vec;
+
     caseState csb;
     vector<caseState> vec2;
-    
+    string ssm;
     for (int i = 0; i<doc["data"]["case"].Size(); i++) {
         cout<<"size is *********"<<doc["data"]["case"].Size()<<endl;
         log("%s\n",doc["data"]["case"][i]["caseTime"].GetString());
-        string ssm = doc["data"]["case"][i]["caseTime"].GetString();
-        long long sm = atoi(ssm.c_str());
+        ssm = doc["data"]["case"][i]["caseTime"].GetString();
+        ssm = ssm.substr(0,10);
+        log("%s",ssm.c_str());
+        
         string ssw = doc["data"]["case"][i]["caseType"].GetString();
         int sw = atoi(ssw.c_str());
-        csb.caseTimes = sm;
+        time_t tm = atoi(ssm.c_str());
+        struct tm ttm = *gmtime(&tm);
+        int sm_s = ttm.tm_sec;
+        int sm_m = ttm.tm_min;
+        int sm_h = ttm.tm_hour;
+        csb.caseTimes_s = sm_s;
+        csb.caseTimes_m = sm_m;
+        csb.caseTimes_h = sm_h;
         csb.caseStats = sw;
         vec2.push_back(csb);
-//        vec.push_back(csb);
-//        vec->push_back(*doc["data"]["case"][i]["caseTime"].GetString());
+ 
     }
     vector<caseState>::reverse_iterator it = vec2.rbegin();
     while (it!=vec2.rend()) {
         vec.push_back(*it);
         it++;
     }
-    for (int i = 0; i<vec.size(); i++) {
-        cout<<vec[i].caseStats<<"  "<<vec[i].caseTimes<<endl;
-    }
-    cout<<vec.end()->caseStats<<endl;
-    
-    cout<<"size is *********"<<endl;
-    cout<<vec.size()<<endl;
-//    while(vec.size()) {
-//        vec.pop_back();
-//        cout<<vec.begin()->caseStats<<"   "<<vec.end()->caseStats<<endl;
-//        cout<<"size is *********"<<endl;
-//        for (int j=0; j<vec.size(); j++) {
-//            cout<<vec[j].caseStats<<"  "<<vec[j].caseTimes<<endl;
-//        }
-//        cout<<vec.size()<<endl;
+//    for (int i = 0; i<vec.size(); i++) {
+//        cout<<vec[i].caseStats<<"  "<<vec[i].caseTimes_s<<endl;
 //    }
-    schedule(schedule_selector(HelloWorld::update), 1);
+//    
+//    //**************时间戳*****************
+//    time_t tsm = atoi(ssm.c_str());
+//  
+//    log("时间戳****==========%s",asctime(gmtime(&tsm)));
+//    char *t = asctime(gmtime(&tsm));
+//    tmm = gmtime(&tsm);
+//    log("%d",tmm->tm_sec);
+//    log("%d",tmm->tm_min);
+//    log("%d",tmm->tm_hour);
+//    match_timer_m = tmm->tm_min;
+//    match_timer_s = tmm->tm_sec;
+    vec.pop_back();
+    match_timer_m = vec.end()->caseTimes_m;
+    match_timer_s = vec.end()->caseTimes_s;
+    sizeofvec = vec.size()+1;
+    initUI();
+    
+#pragma 本地时间
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+    
+    struct timeval now;
+    struct tm* time;
+    gettimeofday(&now, NULL);
+    time = localtime(&now.tv_sec);
+    int year = time->tm_year + 1900;
+    log("year = %d",year);
+    
+    char date[32] = {0};
+    sprintf(date, "%d%02d%02d %d:%d:%d",(int)time->tm_year + 1900,(int)time->tm_mon + 1,(int)time->tm_mday,(int)time->tm_hour,(int)time->tm_min,(int)time->tm_sec);
+    log("本地时间%s",date);
+    
+#endif
+ 
 }
 
 //json文件解析
@@ -1531,9 +1466,11 @@ void HelloWorld::footballCaseType(int _FootballCaseType){
             cout<<"主队球门球"<<endl;
             break;
         case CASE_TI1:
+            jiaoqiu(11);
             cout<<"主队界外球"<<endl;
             break;
         case CASE_SUB1:
+            alternate(1);
             cout<<"主队换人"<<endl;
             break;
         case CASE_DSH1:
@@ -1655,9 +1592,11 @@ void HelloWorld::footballCaseType(int _FootballCaseType){
             cout<<"客队球门球"<<endl;
             break;
         case CASE_TI2:
+            jiaoqiu(12);
             cout<<"客队界外球"<<endl;
             break;
         case CASE_SUB2:
+            alternate(2);
             cout<<"客队换人"<<endl;
             break;
         case CASE_DSH2:

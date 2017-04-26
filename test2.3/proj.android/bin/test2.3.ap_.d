@@ -32,6 +32,7 @@
 /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/res/huangpai.png \
 /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/res/huiju.png \
 /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/res/jiantou.png \
+/Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/res/jiewaiqiu.png \
 /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/res/jingong.png \
 /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/res/jingong2.png \
 /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/res/jinqiu.png \
@@ -43,6 +44,7 @@
 /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/res/rc.png \
 /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/res/shezheng.png \
 /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/res/tibu.png \
+/Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/res/timebg.png \
 /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/res/titlesp.png \
 /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/res/u759.png \
 /Users/yaofuyu/Desktop/Git_library/cocos2dx/test2.3/proj.android/assets/res/weixianjingong.png \

@@ -3,6 +3,7 @@
 
 #include "cocos2d.h"
 #include <string>
+
 using namespace std;
 USING_NS_CC;
 enum FootballCaseType {
@@ -130,7 +131,9 @@ enum FootballCaseType {
 struct caseState
 {
     int caseStats;
-    long long caseTimes;
+    int caseTimes_s;
+    int caseTimes_m;
+    int caseTimes_h;
 };
 class HelloWorld : public cocos2d::Layer
 {
@@ -281,6 +284,10 @@ public:
     int match_timer_m;
     //时间——秒
     int match_timer_s;
+    
+    tm *tmm;
+    //记录栈的大小
+    int sizeofvec;
 private:
     bool state_dq = true;//点球状态判定
     bool state_kongqiu = true;//控球状态判定
